@@ -40,6 +40,8 @@ type
     procedure acSectionSettingsExecute(Sender: TObject);
     procedure acHelpAboutExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure svSplitViewClosed(Sender: TObject);
+    procedure svSplitViewOpened(Sender: TObject);
   private
     FForms: TApplicationFormList;
     procedure InitSettings;
@@ -90,6 +92,7 @@ end;
 
 procedure TwMain.FormDestroy(Sender: TObject);
 begin
+  ApplicationSettings.FormPosition.SavePosition(self);
   FForms.Free;
 end;
 
@@ -126,6 +129,16 @@ begin
   imBurgerButton.ImageCollection := dmCommon.GetImageCollection;
   vilIcons.ImageCollection := dmCommon.GetImageCollection;
   vilLargeIcons.ImageCollection := dmCommon.GetImageCollection;
+end;
+
+procedure TwMain.svSplitViewClosed(Sender: TObject);
+begin
+  ApplicationSettings.DrawerOpened := false;
+end;
+
+procedure TwMain.svSplitViewOpened(Sender: TObject);
+begin
+  ApplicationSettings.DrawerOpened := true;
 end;
 
 procedure TwMain.WMActivate(var Message: TWMActivate);
