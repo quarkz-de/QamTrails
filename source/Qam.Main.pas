@@ -33,6 +33,8 @@ type
     tbpTitleBar: TTitleBarPanel;
     mbMain: TActionMainMenuBar;
     vilIcons: TVirtualImageList;
+    SpeedButton1: TSpeedButton;
+    acSectionPhotoCollection: TAction;
     procedure FormCreate(Sender: TObject);
     procedure imBurgerButtonClick(Sender: TObject);
     procedure mbMainPaint(Sender: TObject);
@@ -42,6 +44,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure svSplitViewClosed(Sender: TObject);
     procedure svSplitViewOpened(Sender: TObject);
+    procedure acSectionPhotoCollectionExecute(Sender: TObject);
   private
     FForms: TApplicationFormList;
     procedure InitSettings;
@@ -71,14 +74,19 @@ begin
   TwAbout.ExecuteDialog;
 end;
 
+procedure TwMain.acSectionPhotoCollectionExecute(Sender: TObject);
+begin
+  FForms.ShowForm(aftPhotoCollection);
+end;
+
 procedure TwMain.acSectionSettingsExecute(Sender: TObject);
 begin
-  FForms.ShowForm(qftSettings);
+  FForms.ShowForm(aftSettings);
 end;
 
 procedure TwMain.acSectionWelcomeExecute(Sender: TObject);
 begin
-  FForms.ShowForm(qftWelcome);
+  FForms.ShowForm(aftWelcome);
 end;
 
 procedure TwMain.FormCreate(Sender: TObject);

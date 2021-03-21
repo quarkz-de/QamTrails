@@ -21,10 +21,10 @@ object wMain: TwMain
   CustomTitleBar.ButtonPressedBackgroundColor = 7160320
   CustomTitleBar.ButtonInactiveForegroundColor = 10066329
   CustomTitleBar.ButtonInactiveBackgroundColor = clWhite
-  Font.Charset = DEFAULT_CHARSET
+  Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'Tahoma'
+  Font.Height = -13
+  Font.Name = 'Segoe UI'
   Font.Style = []
   GlassFrame.Enabled = True
   GlassFrame.Top = 31
@@ -33,7 +33,7 @@ object wMain: TwMain
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 17
   object svSplitView: TSplitView
     Left = 0
     Top = 30
@@ -80,8 +80,8 @@ object wMain: TwMain
       object txVersion: TLabel
         Left = 136
         Top = 16
-        Width = 16
-        Height = 13
+        Width = 17
+        Height = 17
         Caption = '1.0'
       end
     end
@@ -120,6 +120,19 @@ object wMain: TwMain
         Margin = 6
         ExplicitTop = 4
         ExplicitWidth = 200
+      end
+      object SpeedButton1: TSpeedButton
+        Left = 0
+        Top = 38
+        Width = 170
+        Height = 38
+        Action = acSectionPhotoCollection
+        Align = alTop
+        GroupIndex = 1
+        Images = vilLargeIcons
+        Flat = True
+        Margin = 6
+        ExplicitTop = 64
       end
     end
   end
@@ -174,8 +187,14 @@ object wMain: TwMain
         CollectionName = '002_Settings'
         Disabled = False
         Name = '002_Settings'
+      end
+      item
+        CollectionIndex = 3
+        CollectionName = '003_Gallery'
+        Disabled = False
+        Name = '003_Gallery'
       end>
-    ImageCollection = dmCommon.icLightIcons
+    ImageCollection = dmCommon.icDarkIcons
     Width = 32
     Height = 32
     Left = 524
@@ -235,6 +254,14 @@ object wMain: TwMain
       ImageName = '002_Settings'
       OnExecute = acSectionSettingsExecute
     end
+    object acSectionPhotoCollection: TAction
+      Category = 'Bereich'
+      Caption = 'Fotosammlung'
+      GroupIndex = 1
+      ImageIndex = 3
+      ImageName = '003_Gallery'
+      OnExecute = acSectionPhotoCollectionExecute
+    end
   end
   object vilIcons: TVirtualImageList
     AutoFill = True
@@ -258,6 +285,12 @@ object wMain: TwMain
         CollectionName = '002_Settings'
         Disabled = False
         Name = '002_Settings'
+      end
+      item
+        CollectionIndex = 3
+        CollectionName = '003_Gallery'
+        Disabled = False
+        Name = '003_Gallery'
       end>
     ImageCollection = dmCommon.icDarkIcons
     Left = 476

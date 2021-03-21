@@ -18,7 +18,8 @@ uses
   Qam.About in 'views\Qam.About.pas' {wAbout},
   Qam.Forms in 'views\Qam.Forms.pas',
   Qam.SettingsForm in 'views\Qam.SettingsForm.pas' {wSettingsForm},
-  Qam.WelcomeForm in 'views\Qam.WelcomeForm.pas' {wWelcomeForm};
+  Qam.WelcomeForm in 'views\Qam.WelcomeForm.pas' {wWelcomeForm},
+  Qam.PhotoCollection in 'views\Qam.PhotoCollection.pas' {wPhotoCollection};
 
 {$R *.res}
 
@@ -31,5 +32,6 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TdmCommon, dmCommon);
   Application.CreateForm(TwMain, wMain);
+  Application.CreateForm(TwPhotoCollection, wPhotoCollection);
   Application.Run;
 end.

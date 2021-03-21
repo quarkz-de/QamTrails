@@ -1,0 +1,94 @@
+object wPhotoCollection: TwPhotoCollection
+  Left = 0
+  Top = 0
+  BorderStyle = bsNone
+  Caption = 'Fotosammlung'
+  ClientHeight = 454
+  ClientWidth = 786
+  Color = clBtnFace
+  ParentFont = True
+  OldCreateOrder = False
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Splitter1: TSplitter
+    Left = 200
+    Top = 0
+    Height = 454
+    ExplicitLeft = 392
+    ExplicitTop = 176
+    ExplicitHeight = 100
+  end
+  object vetFolders: TVirtualExplorerTreeview
+    Left = 0
+    Top = 0
+    Width = 200
+    Height = 454
+    Active = True
+    Align = alLeft
+    BorderStyle = bsNone
+    ColumnDetails = cdUser
+    DefaultNodeHeight = 17
+    DragHeight = 250
+    DragWidth = 150
+    FileObjects = [foFolders, foHidden, foEnableAsync]
+    FileSizeFormat = fsfExplorer
+    FileSort = fsFileType
+    Header.AutoSizeIndex = 0
+    Header.Height = 17
+    Header.MainColumn = -1
+    HintMode = hmHint
+    ParentColor = False
+    RootFolder = rfDesktop
+    TabOrder = 0
+    TabStop = True
+    TreeOptions.AutoOptions = [toAutoScroll, toAutoChangeScale]
+    TreeOptions.MiscOptions = [toAcceptOLEDrop, toEditable, toToggleOnDblClick]
+    TreeOptions.PaintOptions = [toHideSelection, toShowButtons, toShowTreeLines, toUseBlendedImages, toGhostedIfUnfocused]
+    TreeOptions.SelectionOptions = [toLevelSelectConstraint]
+    TreeOptions.VETShellOptions = [toContextMenus]
+    TreeOptions.VETSyncOptions = [toCollapseTargetFirst, toExpandTarget, toSelectTarget]
+    TreeOptions.VETMiscOptions = [toBrowseExecuteFolder, toBrowseExecuteFolderShortcut, toBrowseExecuteZipFolder, toChangeNotifierThread, toRemoveContextMenuShortCut]
+    TreeOptions.VETImageOptions = [toImages, toThreadedImages, toMarkCutAndCopy]
+    Columns = <>
+  end
+  object velFotos: TVirtualExplorerEasyListview
+    Left = 203
+    Top = 0
+    Width = 583
+    Height = 454
+    Align = alClient
+    BorderStyle = bsNone
+    CompressedFile.Color = clRed
+    CompressedFile.Font.Charset = DEFAULT_CHARSET
+    CompressedFile.Font.Color = clWindowText
+    CompressedFile.Font.Height = -11
+    CompressedFile.Font.Name = 'Tahoma'
+    CompressedFile.Font.Style = []
+    DefaultSortColumn = 0
+    EditManager.Font.Charset = DEFAULT_CHARSET
+    EditManager.Font.Color = clWindowText
+    EditManager.Font.Height = -11
+    EditManager.Font.Name = 'Tahoma'
+    EditManager.Font.Style = []
+    EncryptedFile.Color = 32832
+    EncryptedFile.Font.Charset = DEFAULT_CHARSET
+    EncryptedFile.Font.Color = clWindowText
+    EncryptedFile.Font.Height = -11
+    EncryptedFile.Font.Name = 'Tahoma'
+    EncryptedFile.Font.Style = []
+    ExplorerTreeview = vetFolders
+    FileObjects = [foNonFolders]
+    FileSizeFormat = vfsfDefault
+    Grouped = False
+    GroupingColumn = 0
+    PaintInfoGroup.MarginBottom.CaptionIndent = 4
+    PaintInfoGroup.MarginTop.Visible = False
+    Sort.AutoSort = True
+    TabOrder = 1
+    ThumbsManager.StorageFilename = 'QamTrails.album'
+    ThumbsManager.UseExifOrientation = False
+    View = elsThumbnail
+    OnEnumFolder = velFotosEnumFolder
+  end
+end

@@ -14,8 +14,13 @@ type
   TwSettingsForm = class(TApplicationForm)
     txTheme: TLabel;
     cbTheme: TComboBox;
+    txMainCollectionFolderLabel: TLabel;
+    dSelectFolder: TFileOpenDialog;
+    txMainCollectionFolder: TLabel;
+    btSelectFolder: TButton;
     procedure FormCreate(Sender: TObject);
     procedure cbThemeChange(Sender: TObject);
+    procedure btSelectFolderClick(Sender: TObject);
   private
     procedure LoadValues;
     procedure InitControls;
@@ -31,6 +36,13 @@ uses
   Qam.Settings;
 
 { TwSettingsForm }
+
+procedure TwSettingsForm.btSelectFolderClick(Sender: TObject);
+begin
+  dSelectFolder.Filename := ApplicationSettings.MainCollectionFolder;
+  if dSelectFolder.Execute then
+    ApplicationSettings.MainCollectionFolder := dSelectFolder.Filename;
+end;
 
 procedure TwSettingsForm.cbThemeChange(Sender: TObject);
 begin
@@ -52,6 +64,7 @@ procedure TwSettingsForm.LoadValues;
 begin
   QuarkzThemeManager.AssignThemeNames(cbTheme.Items);
   cbTheme.ItemIndex := cbTheme.Items.IndexOf(ApplicationSettings.Theme);
+  txMainCollectionFolder.Caption := ApplicationSettings.MainCollectionFolder;
 end;
 
 end.

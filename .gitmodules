@@ -16,3 +16,12 @@
 [submodule "submodules/DDetours"]
 	path = submodules/DDetours
 	url = https://github.com/MahdiSafsafi/DDetours.git
+[submodule "submodules/MustangpeakEasyListview"]
+	path = submodules/MustangpeakEasyListview
+	url = https://github.com/TurboPack/MustangpeakEasyListview.git
+[submodule "submodules/MustangpeakVirtualshellTools"]
+	path = submodules/MustangpeakVirtualshellTools
+	url = https://github.com/TurboPack/MustangpeakVirtualshellTools.git
+[submodule "submodules/MustangpeakCommonLib"]
+	path = submodules/MustangpeakCommonLib
+	url = https://github.com/TurboPack/MustangpeakCommonLib.git
