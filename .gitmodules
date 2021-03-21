@@ -1,0 +1,18 @@
+[submodule "submodules/spring4d"]
+	path = submodules/spring4d
+	url = https://bitbucket.org/sglienke/spring4d.git
+[submodule "submodules/Qodelib"]
+	path = submodules/Qodelib
+	url = https://github.com/quarkz-de/Qodelib.git
+[submodule "submodules/vcl-styles-utils"]
+	path = submodules/vcl-styles-utils
+	url = https://github.com/RRUZ/vcl-styles-utils.git
+[submodule "submodules/delphi-event-bus"]
+	path = submodules/delphi-event-bus
+	url = https://github.com/spinettaro/delphi-event-bus.git
+[submodule "submodules/delphi-neon"]
+	path = submodules/delphi-neon
+	url = https://github.com/paolo-rossi/delphi-neon.git
+[submodule "submodules/DDetours"]
+	path = submodules/DDetours
+	url = https://github.com/MahdiSafsafi/DDetours.git
