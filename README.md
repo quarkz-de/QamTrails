@@ -7,3 +7,4 @@ siehe path.md
 ## Links
 * [spring4d](https://bitbucket.org/sglienke/spring4d/) Dependency Injection Framework
 * [Icons8](https://icons8.com/) die verwendeten Icons stammen von Icons8
+* [jpegdec](http://www.marktg.com/jpegdec/) Schneller Decoder für JPEG-Dateien

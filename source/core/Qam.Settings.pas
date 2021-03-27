@@ -33,6 +33,7 @@ type
     FDrawerOpened: Boolean;
     FFormPosition: TApplicationFormPosition;
     FMainCollectionFolder: String;
+    FActiveCollectionFolder: String;
     procedure SetTheme(const AValue: String);
     function GetTheme: String;
     function GetSettingsFilename: String;
@@ -53,6 +54,8 @@ type
       write SetFormPositon;
     property MainCollectionFolder: String read FMainCollectionFolder
       write SetMainCollectionFolder;
+    property ActiveCollectionFolder: String read FActiveCollectionFolder
+      write FActiveCollectionFolder;
     property ThumbnailsFoldername: String read GetThumbnailsFoldername;
   end;
 

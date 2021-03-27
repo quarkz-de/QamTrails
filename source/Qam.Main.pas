@@ -132,7 +132,7 @@ end;
 
 procedure TwMain.OnThemeChange(AEvent: IThemeChangeEvent);
 begin
-  CustomTitleBar.SystemColors := AEvent.ThemeName = 'Windows';
+  CustomTitleBar.SystemColors := AEvent.IsWindows;
   mbMain.Invalidate;
   imBurgerButton.ImageCollection := dmCommon.GetImageCollection;
   vilIcons.ImageCollection := dmCommon.GetImageCollection;

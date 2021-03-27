@@ -9,10 +9,12 @@ uses
 type
   IThemeChangeEvent = interface
     ['{CBB7DC12-0268-4D9A-BEC4-1C6855C2F4F3}']
-    function GetThemeName: String;
     function GetIsDark: Boolean;
-    property ThemeName: String read GetThemeName;
+    function GetIsWindows: Boolean;
+    function GetThemeName: String;
     property IsDark: Boolean read GetIsDark;
+    property IsWindows: Boolean read GetIsWindows;
+    property ThemeName: String read GetThemeName;
   end;
 
   ISettingChangeEvent = interface
@@ -23,10 +25,10 @@ type
 
   TEventFactory = class
   public
-    class function NewThemeChangeEvent(
-      const AThemeName: String; const AIsDark: Boolean): IThemeChangeEvent;
     class function NewSettingChangeEvent(
       const AValue: TApplicationSettingValue): ISettingChangeEvent;
+    class function NewThemeChangeEvent(
+      const AThemeName: String; const AIsDark: Boolean): IThemeChangeEvent;
   end;
 
 implementation
@@ -34,15 +36,17 @@ implementation
 type
   TThemeChangeEvent = class(TInterfacedObject, IThemeChangeEvent)
   private
-    FThemeName: String;
     FIsDark: Boolean;
+    FThemeName: String;
   protected
-    function GetThemeName: String;
     function GetIsDark: Boolean;
+    function GetIsWindows: Boolean;
+    function GetThemeName: String;
   public
     constructor Create(const AThemeName: String; const AIsDark: Boolean);
-    property ThemeName: String read GetThemeName;
     property IsDark: Boolean read GetIsDark;
+    property IsWindows: Boolean read GetIsWindows;
+    property ThemeName: String read GetThemeName;
   end;
 
   TSettingChangeEvent = class(TInterfacedObject, ISettingChangeEvent)
@@ -68,6 +72,11 @@ end;
 function TThemeChangeEvent.GetIsDark: Boolean;
 begin
   Result := FIsDark;
+end;
+
+function TThemeChangeEvent.GetIsWindows: Boolean;
+begin
+  Result := ThemeName = 'Windows';
 end;
 
 function TThemeChangeEvent.GetThemeName: String;
