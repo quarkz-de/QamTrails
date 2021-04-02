@@ -4,12 +4,13 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, System.IOUtils,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls;
+  System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls,
+  GR32_Image;
 
 type
   TfrPhotoViewer = class(TFrame)
-    imPhoto: TImage;
+    imPhoto: TImgView32;
   private
   public
     procedure LoadFromFile(const AFilename: String);
@@ -20,31 +21,14 @@ implementation
 {$R *.dfm}
 
 uses
-  jpegdec;
+  Qam.JpegLoader;
 
 { TfrPhotoViewer }
 
 procedure TfrPhotoViewer.LoadFromFile(const AFilename: String);
-var
-  Bmp: TBitmap;
-  Stream: TMemoryStream;
 begin
-  if TFile.Exists(AFilename) then
-    begin
-      Stream := TMemoryStream.Create;
-      try
-        Stream.LoadFromFile(AFilename);
-        Bmp := JpegDecode(Stream.Memory, Stream.Size);
-        if Bmp <> nil then
-          try
-            imPhoto.Picture.Bitmap := Bmp;
-          finally
-            Bmp.Free;
-          end;
-      finally
-        Stream.Free;
-      end;
-    end;
+  if not TJpegLoader.Load(AFilename, imPhoto.Bitmap) then
+    imPhoto.Bitmap.Clear;
 end;
 
 end.

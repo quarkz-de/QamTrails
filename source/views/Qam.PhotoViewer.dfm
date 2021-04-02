@@ -4,18 +4,24 @@ object frPhotoViewer: TfrPhotoViewer
   Width = 320
   Height = 240
   TabOrder = 0
-  object imPhoto: TImage
+  object imPhoto: TImgView32
     Left = 0
     Top = 0
     Width = 320
     Height = 240
     Align = alClient
-    Center = True
-    Proportional = True
-    Stretch = True
-    ExplicitLeft = 120
-    ExplicitTop = 104
-    ExplicitWidth = 105
-    ExplicitHeight = 105
+    Bitmap.ResamplerClassName = 'TNearestResampler'
+    BitmapAlign = baCustom
+    Scale = 1.000000000000000000
+    ScaleMode = smOptimalScaled
+    ScrollBars.ShowHandleGrip = True
+    ScrollBars.Style = rbsDefault
+    ScrollBars.Size = 17
+    OverSize = 0
+    TabOrder = 0
+    ExplicitLeft = 26
+    ExplicitTop = 20
+    ExplicitWidth = 192
+    ExplicitHeight = 192
   end
 end

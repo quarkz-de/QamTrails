@@ -21,7 +21,8 @@ uses
   Qam.WelcomeForm in 'views\Qam.WelcomeForm.pas' {wWelcomeForm},
   Qam.PhotoCollection in 'views\Qam.PhotoCollection.pas' {wPhotoCollection},
   Qam.PhotoViewer in 'views\Qam.PhotoViewer.pas' {frPhotoViewer: TFrame},
-  Qam.Types in 'core\Qam.Types.pas';
+  Qam.Types in 'core\Qam.Types.pas',
+  Qam.JpegLoader in 'graphics\Qam.JpegLoader.pas';
 
 {$R *.res}
 

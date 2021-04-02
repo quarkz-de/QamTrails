@@ -25,3 +25,6 @@
 [submodule "submodules/MustangpeakCommonLib"]
 	path = submodules/MustangpeakCommonLib
 	url = https://github.com/TurboPack/MustangpeakCommonLib.git
+[submodule "submodules/graphics32"]
+	path = submodules/graphics32
+	url = https://github.com/graphics32/graphics32.git
