@@ -22,7 +22,9 @@ uses
   Qam.PhotoCollection in 'views\Qam.PhotoCollection.pas' {wPhotoCollection},
   Qam.PhotoViewer in 'views\Qam.PhotoViewer.pas' {frPhotoViewer: TFrame},
   Qam.Types in 'core\Qam.Types.pas',
-  Qam.JpegLoader in 'graphics\Qam.JpegLoader.pas';
+  Qam.ImageRotate in 'graphics\Qam.ImageRotate.pas',
+  Qam.JpegLoader in 'graphics\Qam.JpegLoader.pas',
+  Qam.Storage in 'core\Qam.Storage.pas';
 
 {$R *.res}
 

@@ -30,6 +30,8 @@ type
     procedure velFotosItemSelectionChanged(Sender: TCustomEasyListview; Item:
         TEasyItem);
     procedure vetFoldersChange(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure vetFoldersEnumFolder(Sender: TCustomVirtualExplorerTree; Namespace:
+        TNamespace; var AllowAsChild: Boolean);
   private
     FViewer: TfrPhotoViewer;
     FFolderStyle: TPhotoCollectionFolderStyle;
@@ -51,7 +53,7 @@ var
 implementation
 
 uses
-  Qam.Settings;
+  Qam.Settings, Qam.Storage;
 
 {$R *.dfm}
 
@@ -64,12 +66,13 @@ end;
 
 procedure TwPhotoCollection.FormCreate(Sender: TObject);
 begin
+  GlobalEventBus.RegisterSubscriberForEvents(Self);
+
   FViewer := TfrPhotoViewer.Create(self);
   FViewer.Parent := pnPreview;
   FViewer.Align := alClient;
 
   velFotos.ThumbsManager.StorageFilename := 'QamTrails.album';
-  velFotos.ThumbsManager.StorageRepositoryFolder := ApplicationSettings.ThumbnailsFoldername;
   velFotos.ThumbsManager.AutoLoad := true;
   velFotos.ThumbsManager.AutoSave := true;
 
@@ -83,9 +86,7 @@ procedure TwPhotoCollection.OnSettingChange(AEvent: ISettingChangeEvent);
 begin
   case AEvent.Value of
     svMainCollectionFolder:
-      begin
-        SetRootFolder;
-      end;
+      SetRootFolder;
   end;
 end;
 
@@ -141,6 +142,8 @@ begin
 
   velFotos.RootFolder := rfCustom;
   velFotos.RootFolderCustomPath := ApplicationSettings.MainCollectionFolder;
+  velFotos.ThumbsManager.StorageRepositoryFolder := ApplicationSettings.ThumbnailsFoldername;
+  TThumbnailStorage.Initialize;
 
   vetFolders.Active := true;
   velFotos.Active := true;
@@ -189,6 +192,16 @@ procedure TwPhotoCollection.vetFoldersChange(Sender: TBaseVirtualTree;
   Node: PVirtualNode);
 begin
   ApplicationSettings.ActiveCollectionFolder := vetFolders.SelectedPath;
+end;
+
+procedure TwPhotoCollection.vetFoldersEnumFolder(
+  Sender: TCustomVirtualExplorerTree; Namespace: TNamespace;
+  var AllowAsChild: Boolean);
+begin
+  if Namespace.Folder then
+    AllowAsChild := Namespace.NameInFolder <> '.QamTrails'
+  else
+    AllowAsChild := false;
 end;
 
 end.

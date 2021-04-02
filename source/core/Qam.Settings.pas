@@ -84,7 +84,6 @@ begin
   FFormPosition := TApplicationFormPosition.Create;
   FDrawerOpened := true;
   FMainCollectionFolder := TPath.GetPicturesPath;
-  ForceDirectories(ThumbnailsFoldername);
 end;
 
 destructor TApplicationSettings.Destroy;
@@ -100,7 +99,10 @@ end;
 
 function TApplicationSettings.GetSettingsFoldername: String;
 begin
-  Result := TPath.Combine(TKnownFolders.GetAppDataPath, 'quarkz.de');
+  if ParamCount > 0 then
+    Result := ParamStr(1)
+  else
+    Result := TPath.Combine(TKnownFolders.GetAppDataPath, 'quarkz.de');
 end;
 
 function TApplicationSettings.GetTheme: String;
@@ -110,7 +112,10 @@ end;
 
 function TApplicationSettings.GetThumbnailsFoldername: String;
 begin
-  Result := TPath.Combine(TKnownFolders.GetCommonAppDataPath, 'quarkz.de\QamTrails\Thumbnails');
+  if MainCollectionFolder <> '' then
+    Result := TPath.Combine(MainCollectionFolder, '.QamTrails')
+  else
+    Result := TPath.Combine(TKnownFolders.GetCommonAppDataPath, 'quarkz.de\QamTrails\Thumbnails');
 end;
 
 procedure TApplicationSettings.LoadSettings;

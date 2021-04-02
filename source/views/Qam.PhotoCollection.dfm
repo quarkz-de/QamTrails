@@ -51,6 +51,7 @@ object wPhotoCollection: TwPhotoCollection
     TreeOptions.VETMiscOptions = [toBrowseExecuteFolder, toBrowseExecuteFolderShortcut, toBrowseExecuteZipFolder, toChangeNotifierThread, toRemoveContextMenuShortCut]
     TreeOptions.VETImageOptions = [toImages, toThreadedImages, toMarkCutAndCopy]
     OnChange = vetFoldersChange
+    OnEnumFolder = vetFoldersEnumFolder
     Columns = <>
   end
   object ToolBar1: TToolBar
@@ -122,7 +123,6 @@ object wPhotoCollection: TwPhotoCollection
       FileSizeFormat = vfsfDefault
       Grouped = False
       GroupingColumn = 0
-      Header.Visible = True
       PaintInfoGroup.MarginBottom.CaptionIndent = 4
       PaintInfoGroup.MarginTop.Visible = False
       Sort.Algorithm = esaQuickSort

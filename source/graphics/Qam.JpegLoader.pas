@@ -3,7 +3,7 @@ unit Qam.JpegLoader;
 interface
 
 uses
-  Classes, Graphics,
+  System.Classes, Vcl.Graphics,
   GR32;
 
 type
