@@ -3,7 +3,9 @@ unit Qam.JpegLoader;
 interface
 
 uses
-  System.Classes, Vcl.Graphics,
+  System.SysUtils, System.Classes,
+  Winapi.Windows,
+  Vcl.Graphics,
   GR32;
 
 type
@@ -13,6 +15,8 @@ type
   public
     class function Load(const AFilename: String; const ABitmap: TBitmap): Boolean; overload;
     class function Load(const AFilename: String; const ABitmap: TBitmap32): Boolean; overload;
+    class function LoadThumb(const AFilename: String; const AWidth, AHeight: Integer;
+      const ABitmap: TBitmap): Boolean; overload;
   end;
 
 implementation
@@ -73,5 +77,39 @@ begin
       end;
     end;
 end;
+
+class function TJpegLoader.LoadThumb(const AFilename: String; const AWidth,
+  AHeight: Integer; const ABitmap: TBitmap): Boolean;
+var
+  Source, Destination: TBitmap32;
+  Ratio: Single;
+begin
+  Source := TBitmap32.Create;
+  Destination := TBitmap32.Create;
+  try
+    if Load(AFilename, Source) then
+      begin
+        if Source.Height > Source.Width then
+          begin
+            Ratio := Source.Width / Source.Height;
+            Destination.SetSize(Round(AHeight * Ratio), Round(AWidth * Ratio))
+          end
+        else
+          begin
+            Ratio := Source.Height / Source.Width;
+            Destination.SetSize(Round(AWidth * Ratio), Round(AHeight * Ratio));
+          end;
+        Source.DrawTo(Destination, Destination.BoundsRect);
+        ABitmap.Assign(Destination);
+        Result := true;
+      end
+    else
+      Result := false;
+  finally
+    Source.Free;
+    Destination.Free;
+  end;
+end;
+
 
 end.

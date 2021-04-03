@@ -11,6 +11,7 @@ uses
 type
   TfrPhotoViewer = class(TFrame)
     imPhoto: TImgView32;
+    procedure imPhotoClick(Sender: TObject);
   private
   public
     procedure LoadFromFile(const AFilename: String);
@@ -21,7 +22,18 @@ implementation
 {$R *.dfm}
 
 uses
-  Qam.JpegLoader;
+  Qam.JpegLoader, Qam.ImageRotate;
+
+procedure TfrPhotoViewer.imPhotoClick(Sender: TObject);
+var
+  Bmp: TBitmap;
+begin
+  Bmp := TBitmap.Create;
+  Bmp.Assign(imPhoto.Bitmap);
+  TImageRotate.FlipLeft(Bmp);
+  imPhoto.Bitmap.Assign(Bmp);
+  Bmp.Free;
+end;
 
 { TfrPhotoViewer }
 

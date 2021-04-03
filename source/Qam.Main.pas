@@ -35,12 +35,15 @@ type
     vilIcons: TVirtualImageList;
     SpeedButton1: TSpeedButton;
     acSectionPhotoCollection: TAction;
+    sbAlben: TSpeedButton;
+    acSectionPhotoAlbums: TAction;
     procedure FormCreate(Sender: TObject);
     procedure imBurgerButtonClick(Sender: TObject);
     procedure mbMainPaint(Sender: TObject);
     procedure acSectionWelcomeExecute(Sender: TObject);
     procedure acSectionSettingsExecute(Sender: TObject);
     procedure acHelpAboutExecute(Sender: TObject);
+    procedure acSectionPhotoAlbumsExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure svSplitViewClosed(Sender: TObject);
     procedure svSplitViewOpened(Sender: TObject);
@@ -72,6 +75,11 @@ uses
 procedure TwMain.acHelpAboutExecute(Sender: TObject);
 begin
   TwAbout.ExecuteDialog;
+end;
+
+procedure TwMain.acSectionPhotoAlbumsExecute(Sender: TObject);
+begin
+  FForms.ShowForm(aftAlbums);
 end;
 
 procedure TwMain.acSectionPhotoCollectionExecute(Sender: TObject);

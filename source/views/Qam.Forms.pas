@@ -9,7 +9,8 @@ uses
 type
   TApplicationForm = class(TForm);
 
-  TApplicationFormType = (aftWelcome, aftSettings, aftPhotoCollection);
+  TApplicationFormType = (aftWelcome, aftSettings, aftPhotoCollection,
+    aftAlbums);
 
   TApplicationFormList = class(TObject)
   private
@@ -26,7 +27,8 @@ type
 implementation
 
 uses
-  Qam.WelcomeForm, Qam.SettingsForm, Qam.PhotoCollection;
+  Qam.WelcomeForm, Qam.SettingsForm, Qam.PhotoCollection,
+  Qam.Albums;
 
 { TApplicationFormList }
 
@@ -44,9 +46,13 @@ begin
   FForms[aftWelcome] := TwWelcomeForm.Create(FParent);
   FForms[aftSettings] := TwSettingsForm.Create(FParent);
   FForms[aftPhotoCollection] := TwPhotoCollection.Create(FParent);
+  FForms[aftAlbums] := TwAlbums.Create(FParent);
 
   for Form in FForms do
-    Form.Font := FParent.Font;
+    begin
+      Form.Font := FParent.Font;
+      Form.BorderStyle := bsNone;
+    end;
 end;
 
 function TApplicationFormList.GetActiveForm: TApplicationForm;

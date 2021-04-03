@@ -1,0 +1,40 @@
+object wAlbums: TwAlbums
+  Left = 0
+  Top = 0
+  Caption = 'wAlbums'
+  ClientHeight = 299
+  ClientWidth = 635
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object clFotos: TControlList
+    Left = 0
+    Top = 0
+    Width = 635
+    Height = 200
+    Align = alTop
+    ItemWidth = 300
+    ItemMargins.Left = 0
+    ItemMargins.Top = 0
+    ItemMargins.Right = 0
+    ItemMargins.Bottom = 0
+    ColumnLayout = cltMultiLeftToRight
+    ParentColor = False
+    TabOrder = 0
+    OnBeforeDrawItem = clFotosBeforeDrawItem
+    object txFilename: TLabel
+      Left = 108
+      Top = 4
+      Width = 52
+      Height = 13
+      Caption = 'txFilename'
+    end
+  end
+end

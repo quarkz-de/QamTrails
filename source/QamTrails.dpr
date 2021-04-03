@@ -24,7 +24,9 @@ uses
   Qam.Types in 'core\Qam.Types.pas',
   Qam.ImageRotate in 'graphics\Qam.ImageRotate.pas',
   Qam.JpegLoader in 'graphics\Qam.JpegLoader.pas',
-  Qam.Storage in 'core\Qam.Storage.pas';
+  Qam.Storage in 'core\Qam.Storage.pas',
+  Qam.Albums in 'views\Qam.Albums.pas' {wAlbums},
+  Qam.PhotoAlbum in 'models\Qam.PhotoAlbum.pas';
 
 {$R *.res}
 
@@ -38,5 +40,6 @@ begin
   Application.CreateForm(TdmCommon, dmCommon);
   Application.CreateForm(TwMain, wMain);
   Application.CreateForm(TwPhotoCollection, wPhotoCollection);
+  Application.CreateForm(TwAlbums, wAlbums);
   Application.Run;
 end.

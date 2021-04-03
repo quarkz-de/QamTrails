@@ -134,6 +134,19 @@ object wMain: TwMain
         Margin = 6
         ExplicitTop = 64
       end
+      object sbAlben: TSpeedButton
+        Left = 0
+        Top = 76
+        Width = 170
+        Height = 38
+        Action = acSectionPhotoAlbums
+        Align = alTop
+        GroupIndex = 1
+        Images = vilLargeIcons
+        Flat = True
+        Margin = 6
+        ExplicitTop = 120
+      end
     end
   end
   object tbpTitleBar: TTitleBarPanel
@@ -193,6 +206,12 @@ object wMain: TwMain
         CollectionName = '003_Gallery'
         Disabled = False
         Name = '003_Gallery'
+      end
+      item
+        CollectionIndex = 4
+        CollectionName = '004_FilmRoll'
+        Disabled = False
+        Name = '004_FilmRoll'
       end>
     ImageCollection = dmCommon.icDarkIcons
     Width = 32
@@ -258,9 +277,17 @@ object wMain: TwMain
       Category = 'Bereich'
       Caption = 'Fotosammlung'
       GroupIndex = 1
+      ImageIndex = 4
+      ImageName = '004_FilmRoll'
+      OnExecute = acSectionPhotoCollectionExecute
+    end
+    object acSectionPhotoAlbums: TAction
+      Category = 'Bereich'
+      Caption = 'Alben'
+      GroupIndex = 1
       ImageIndex = 3
       ImageName = '003_Gallery'
-      OnExecute = acSectionPhotoCollectionExecute
+      OnExecute = acSectionPhotoAlbumsExecute
     end
   end
   object vilIcons: TVirtualImageList
@@ -291,6 +318,12 @@ object wMain: TwMain
         CollectionName = '003_Gallery'
         Disabled = False
         Name = '003_Gallery'
+      end
+      item
+        CollectionIndex = 4
+        CollectionName = '004_FilmRoll'
+        Disabled = False
+        Name = '004_FilmRoll'
       end>
     ImageCollection = dmCommon.icDarkIcons
     Left = 476
