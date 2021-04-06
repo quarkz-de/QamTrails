@@ -137,7 +137,7 @@ end;
 
 procedure TPhotoItemThumbnail.Load(const AWidth, AHeight: Integer);
 begin
-  TJpegLoader.LoadThumb(FItem.Filename, AWidth, AHeight, FBitmap);
+  TJpegLoader.LoadThumbnail(FItem.Filename, AWidth, AHeight, FBitmap);
   FIsLoaded := true;
 end;
 

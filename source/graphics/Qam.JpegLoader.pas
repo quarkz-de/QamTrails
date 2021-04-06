@@ -15,7 +15,7 @@ type
   public
     class function Load(const AFilename: String; const ABitmap: TBitmap): Boolean; overload;
     class function Load(const AFilename: String; const ABitmap: TBitmap32): Boolean; overload;
-    class function LoadThumb(const AFilename: String; const AWidth, AHeight: Integer;
+    class function LoadThumbnail(const AFilename: String; const AWidth, AHeight: Integer;
       const ABitmap: TBitmap): Boolean; overload;
   end;
 
@@ -78,7 +78,7 @@ begin
     end;
 end;
 
-class function TJpegLoader.LoadThumb(const AFilename: String; const AWidth,
+class function TJpegLoader.LoadThumbnail(const AFilename: String; const AWidth,
   AHeight: Integer; const ABitmap: TBitmap): Boolean;
 var
   Source, Destination: TBitmap32;
