@@ -28,3 +28,6 @@
 [submodule "submodules/graphics32"]
 	path = submodules/graphics32
 	url = https://github.com/graphics32/graphics32.git
+[submodule "submodules/VirtualTreeView"]
+	path = submodules/VirtualTreeView
+	url = https://github.com/TurboPack/VirtualTreeView.git
