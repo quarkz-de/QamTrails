@@ -2,6 +2,7 @@
 
 ## Designtime Packages
 
+* VirtualTreeView
 * Mustangpeak VirtualshellTools
 * Graphics32
 
@@ -16,6 +17,7 @@
 * [delphi-event-bus](https://github.com/spinettaro/delphi-event-bus) DEB - Delphi Event Bus
 * [delphi-neon](https://github.com/paolo-rossi/delphi-neon) Delphi Neon
 * [DDetours](https://github.com/MahdiSafsafi/DDetours) DDetours
+* [VirtualTreeView](https://github.com/TurboPack/VirtualTreeView) VirtualTreeView
 * [MustangpeakEasyListview](https://github.com/TurboPack/MustangpeakEasyListview) Mustangpeek EasyListview
 * [MustangpeakVirtualshellTools](https://github.com/TurboPack/MustangpeakVirtualshellTools) Mustangpeak VirtualshellTools
 * [MustangpeakCommonLib](https://github.com/TurboPack/MustangpeakCommonLib) Mustangpeak CommonLib
