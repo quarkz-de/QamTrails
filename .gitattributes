@@ -1,0 +1,6 @@
+*.dpr text eol=crlf diff=pascal
+*.pas text eol=crlf diff=pascal
+*.dfm text eol=crlf
+*.inc text eol=crlf
+*.rc text eol=crlf
+*.res binary
