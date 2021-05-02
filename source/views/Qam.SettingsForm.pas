@@ -7,8 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
   Vcl.Imaging.pngimage, Vcl.ExtCtrls, Vcl.StdCtrls,
-  Eventbus,
-  Qam.Forms, Qam.Events;
+  Qam.Forms;
 
 type
   TwSettingsForm = class(TApplicationForm)

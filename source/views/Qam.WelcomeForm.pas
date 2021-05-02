@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
-  Vcl.Imaging.pngimage, Vcl.ExtCtrls, Vcl.StdCtrls,
+  Vcl.Imaging.pngimage, Vcl.ExtCtrls,
   Eventbus,
   Qam.Forms, Qam.Events;
 
@@ -26,8 +26,7 @@ implementation
 {$R *.dfm}
 
 uses
-  Qodelib.HighDpi,
-  Qam.Settings, Qam.Main, Qam.DataModule;
+  Qam.Settings;
 
 { TwWelcomeForm }
 
