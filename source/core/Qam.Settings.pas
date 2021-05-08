@@ -4,7 +4,8 @@ interface
 
 uses
   System.SysUtils, System.Classes,
-  Vcl.Forms;
+  Vcl.Forms,
+  Qam.Types;
 
 type
   TApplicationFormPosition = class(TPersistent)
@@ -26,7 +27,7 @@ type
     property Width: Integer read FWidth write FWidth;
   end;
 
-  TApplicationSettingValue = (svMainCollectionFolder);
+  TApplicationSettingValue = (svMainCollectionFolder, svPhotoCollectionFolderStyle);
 
   TApplicationSettings = class(TPersistent)
   private
@@ -34,13 +35,15 @@ type
     FFormPosition: TApplicationFormPosition;
     FMainCollectionFolder: String;
     FActiveCollectionFolder: String;
+    FPhotoCollectionFolderStyle: TPhotoCollectionFolderStyle;
     procedure SetTheme(const AValue: String);
     function GetTheme: String;
     function GetSettingsFilename: String;
     function GetSettingsFoldername: String;
-    function GetThumbnailsFoldername: String;
+    function GetDataFoldername: String;
     procedure SetFormPositon(const Value: TApplicationFormPosition);
     procedure SetMainCollectionFolder(const Value: String);
+    procedure SetPhotoCollectionFolderStyle(const Value: TPhotoCollectionFolderStyle);
     procedure ChangeEvent(const AValue: TApplicationSettingValue);
   public
     constructor Create;
@@ -56,7 +59,9 @@ type
       write SetMainCollectionFolder;
     property ActiveCollectionFolder: String read FActiveCollectionFolder
       write FActiveCollectionFolder;
-    property ThumbnailsFoldername: String read GetThumbnailsFoldername;
+    property DataFoldername: String read GetDataFoldername;
+    property PhotoCollectionFolderStyle: TPhotoCollectionFolderStyle
+      read FPhotoCollectionFolderStyle write SetPhotoCollectionFolderStyle;
   end;
 
 var
@@ -84,12 +89,21 @@ begin
   FFormPosition := TApplicationFormPosition.Create;
   FDrawerOpened := true;
   FMainCollectionFolder := TPath.GetPicturesPath;
+  FPhotoCollectionFolderStyle := cfsGrid;
 end;
 
 destructor TApplicationSettings.Destroy;
 begin
   FormPosition.Free;
   inherited;
+end;
+
+function TApplicationSettings.GetDataFoldername: String;
+begin
+  if MainCollectionFolder <> '' then
+    Result := TPath.Combine(MainCollectionFolder, '.QamTrails')
+  else
+    Result := TPath.Combine(TKnownFolders.GetCommonAppDataPath, 'quarkz.de\QamTrails\Thumbnails');
 end;
 
 function TApplicationSettings.GetSettingsFilename: String;
@@ -108,14 +122,6 @@ end;
 function TApplicationSettings.GetTheme: String;
 begin
   Result := QuarkzThemeManager.ThemeName;
-end;
-
-function TApplicationSettings.GetThumbnailsFoldername: String;
-begin
-  if MainCollectionFolder <> '' then
-    Result := TPath.Combine(MainCollectionFolder, '.QamTrails')
-  else
-    Result := TPath.Combine(TKnownFolders.GetCommonAppDataPath, 'quarkz.de\QamTrails\Thumbnails');
 end;
 
 procedure TApplicationSettings.LoadSettings;
@@ -159,6 +165,16 @@ begin
     begin
       FMainCollectionFolder := Value;
       ChangeEvent(svMainCollectionFolder);
+    end;
+end;
+
+procedure TApplicationSettings.SetPhotoCollectionFolderStyle(
+  const Value: TPhotoCollectionFolderStyle);
+begin
+  if FPhotoCollectionFolderStyle <> Value then
+    begin
+      FPhotoCollectionFolderStyle := Value;
+      ChangeEvent(svPhotoCollectionFolderStyle);
     end;
 end;
 

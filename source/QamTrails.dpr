@@ -11,6 +11,7 @@ uses
   Vcl.Styles.Utils.Forms,
   Vcl.Styles.Utils.ComCtrls,
   Vcl.Styles.Utils.ScreenTips,
+  Qodelib.Instance,
   Qam.Main in 'Qam.Main.pas' {wMain},
   Qam.DataModule in 'Qam.DataModule.pas' {dmCommon: TDataModule},
   Qam.Events in 'core\Qam.Events.pas',
@@ -26,7 +27,13 @@ uses
   Qam.JpegLoader in 'graphics\Qam.JpegLoader.pas',
   Qam.Storage in 'core\Qam.Storage.pas',
   Qam.Albums in 'views\Qam.Albums.pas' {wAlbums},
-  Qam.PhotoAlbum in 'models\Qam.PhotoAlbum.pas';
+  Qam.PhotoAlbum in 'models\Qam.PhotoAlbum.pas',
+  Qam.Database in 'core\Qam.Database.pas',
+  Qam.DatabaseMigrations in 'core\Qam.DatabaseMigrations.pas',
+  Qam.DatabaseMigrator in 'core\Qam.DatabaseMigrator.pas',
+  Qam.Migrations in 'models\Qam.Migrations.pas',
+  Qam.AlbumsVisualizer in 'views\Qam.AlbumsVisualizer.pas',
+  Qam.AlbumSelector in 'views\Qam.AlbumSelector.pas' {wAlbumSelector};
 
 {$R *.res}
 
@@ -34,12 +41,12 @@ begin
 {$ifdef DEBUG}
   ReportMemoryLeaksOnShutdown := True;
 {$endif}
+  if not CheckSingleInstance('{8B344693-F620-4DD8-92BC-492B2394A746}') then
+    Exit;
   GlobalContainer.Build;
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TdmCommon, dmCommon);
   Application.CreateForm(TwMain, wMain);
-  Application.CreateForm(TwPhotoCollection, wPhotoCollection);
-  Application.CreateForm(TwAlbums, wAlbums);
   Application.Run;
 end.

@@ -6,7 +6,7 @@ uses
   System.SysUtils;
 
 type
-  TThumbnailStorage = class
+  TDataStorage = class
   public
     class procedure Initialize;
   end;
@@ -17,13 +17,13 @@ uses
   System.IOUtils,
   Qam.Settings;
 
-{ TThumbnailStorage }
+{ TDataStorage }
 
-class procedure TThumbnailStorage.Initialize;
+class procedure TDataStorage.Initialize;
 var
   Folder: String;
 begin
-  Folder := ApplicationSettings.ThumbnailsFoldername;
+  Folder := ApplicationSettings.DataFoldername;
   if not TDirectory.Exists(Folder) then
     ForceDirectories(Folder);
 {$IFDEF MSWINDOWS}

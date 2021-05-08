@@ -5,25 +5,42 @@ interface
 uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.IOUtils,
+  System.ImageList, System.Actions,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls,
-  Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls,
+  Vcl.ComCtrls, Vcl.ToolWin, Vcl.Buttons, Vcl.ImgList,
+  Vcl.VirtualImageList, Vcl.ActnList,
   Eventbus,
   VirtualTrees, VirtualExplorerEasyListview, VirtualExplorerTree,
   MPCommonObjects, MPShellUtilities, EasyListview,
-  Qam.Forms, Qam.Events, Qam.PhotoViewer, Qam.Types;
+  Qam.Forms, Qam.Events, Qam.PhotoViewer, Qam.Types, Qam.PhotoAlbum;
 
 type
   TwPhotoCollection = class(TApplicationForm)
     vetFolders: TVirtualExplorerTreeview;
     Splitter1: TSplitter;
     velFotos: TVirtualExplorerEasyListview;
-    ToolBar1: TToolBar;
-    ToolButton1: TToolButton;
-    ToolButton2: TToolButton;
     pnContent: TPanel;
     pnPreview: TPanel;
-    cbView: TComboBox;
-    procedure cbViewChange(Sender: TObject);
+    vilIcons: TVirtualImageList;
+    alActions: TActionList;
+    acViewThumbnails: TAction;
+    acViewPreview: TAction;
+    acViewDetails: TAction;
+    tbToolbar: TToolBar;
+    tbViewThumbnails: TToolButton;
+    tbViewPreview: TToolButton;
+    tbViewDetails: TToolButton;
+    tbDivider1: TToolButton;
+    tbActiveAlbum: TToolButton;
+    acActiveAlbum: TAction;
+    acAddToActiveAlbum: TAction;
+    ToolButton1: TToolButton;
+    sbStatus: TStatusBar;
+    procedure acActiveAlbumExecute(Sender: TObject);
+    procedure acAddToActiveAlbumExecute(Sender: TObject);
+    procedure acViewDetailsExecute(Sender: TObject);
+    procedure acViewPreviewExecute(Sender: TObject);
+    procedure acViewThumbnailsExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure velFotosEnumFolder(Sender: TCustomVirtualExplorerEasyListview;
       Namespace: TNamespace; var AllowAsChild: Boolean);
@@ -34,17 +51,20 @@ type
         TNamespace; var AllowAsChild: Boolean);
   private
     FViewer: TfrPhotoViewer;
-    FFolderStyle: TPhotoCollectionFolderStyle;
-    procedure SetFolderStyle(Value: TPhotoCollectionFolderStyle);
+    FActiveAlbum: TPhotoAlbum;
+    procedure SetFolderStyle;
     procedure SetRootFolder;
+    procedure SetActiveAlbum(const Value: TPhotoAlbum);
     procedure UpdatePreview;
+  protected
+    property ActiveAlbum: TPhotoAlbum read FActiveAlbum write SetActiveAlbum;
   public
     [Subscribe]
     procedure OnThemeChange(AEvent: IThemeChangeEvent);
     [Subscribe]
     procedure OnSettingChange(AEvent: ISettingChangeEvent);
-    property FolderStyle: TPhotoCollectionFolderStyle read FFolderStyle
-      write SetFolderStyle;
+    [Subscribe]
+    procedure OnActiveAlbumChange(AEvent: IActiveAlbumChangeEvent);
   end;
 
 var
@@ -53,15 +73,39 @@ var
 implementation
 
 uses
-  Qam.Settings, Qam.Storage;
+  Qodelib.DropdownForm,
+  Qam.Settings, Qam.Storage, Qam.DataModule, Qam.AlbumSelector;
 
 {$R *.dfm}
 
 { TwPhotoCollection }
 
-procedure TwPhotoCollection.cbViewChange(Sender: TObject);
+procedure TwPhotoCollection.acActiveAlbumExecute(Sender: TObject);
 begin
-  FolderStyle := TPhotoCollectionFolderStyle.Create(cbView.ItemIndex);
+  TDropDownFormController.DropDown(TwAlbumSelector, tbActiveAlbum);
+end;
+
+procedure TwPhotoCollection.acAddToActiveAlbumExecute(Sender: TObject);
+begin
+  if Assigned(ActiveAlbum) then
+    TPhotoAlbumItemHelper.AddItem(ActiveAlbum, velFotos.SelectedPath)
+  else
+    ShowMessage('Kein Album ausgewählt.');
+end;
+
+procedure TwPhotoCollection.acViewDetailsExecute(Sender: TObject);
+begin
+  ApplicationSettings.PhotoCollectionFolderStyle := cfsDetails;
+end;
+
+procedure TwPhotoCollection.acViewPreviewExecute(Sender: TObject);
+begin
+  ApplicationSettings.PhotoCollectionFolderStyle := cfsPreview;
+end;
+
+procedure TwPhotoCollection.acViewThumbnailsExecute(Sender: TObject);
+begin
+  ApplicationSettings.PhotoCollectionFolderStyle := cfsGrid;
 end;
 
 procedure TwPhotoCollection.FormCreate(Sender: TObject);
@@ -76,10 +120,14 @@ begin
   velFotos.ThumbsManager.AutoLoad := true;
   velFotos.ThumbsManager.AutoSave := true;
 
-  TPhotoCollectionFolderStyle.AssignStrings(cbView.Items);
-  FolderStyle := cfsGrid;
-
   SetRootFolder;
+  SetFolderStyle;
+end;
+
+procedure TwPhotoCollection.OnActiveAlbumChange(
+  AEvent: IActiveAlbumChangeEvent);
+begin
+  ActiveAlbum := AEvent.Album;
 end;
 
 procedure TwPhotoCollection.OnSettingChange(AEvent: ISettingChangeEvent);
@@ -87,19 +135,25 @@ begin
   case AEvent.Value of
     svMainCollectionFolder:
       SetRootFolder;
+    svPhotoCollectionFolderStyle:
+      SetFolderStyle;
   end;
 end;
 
 procedure TwPhotoCollection.OnThemeChange(AEvent: IThemeChangeEvent);
 begin
-
+  vilIcons.ImageCollection := dmCommon.GetImageCollection;
 end;
 
-procedure TwPhotoCollection.SetFolderStyle(Value: TPhotoCollectionFolderStyle);
+procedure TwPhotoCollection.SetActiveAlbum(const Value: TPhotoAlbum);
 begin
-  FFolderStyle := Value;
+  FActiveAlbum := Value;
+  sbStatus.Panels[1].Text := FActiveAlbum.Name;
+end;
 
-  case FFolderStyle of
+procedure TwPhotoCollection.SetFolderStyle;
+begin
+  case ApplicationSettings.PhotoCollectionFolderStyle of
     cfsGrid:
       begin
         pnPreview.Visible := false;
@@ -107,6 +161,7 @@ begin
         velFotos.View := elsThumbnail;
         velFotos.Align := alClient;
         pnPreview.Align := alNone;
+        acViewThumbnails.Checked := true;
       end;
     cfsPreview:
       begin
@@ -117,6 +172,7 @@ begin
         velFotos.Align := alTop;
         velFotos.Height := velFotos.CellSizes.FilmStrip.Height + 20;
         pnPreview.Align := alClient;
+        acViewPreview.Checked := true;
       end;
     cfsDetails:
       begin
@@ -125,10 +181,9 @@ begin
         pnPreview.Visible := false;
         velFotos.Align := alClient;
         pnPreview.Align := alNone;
+        acViewDetails.Checked := true;
       end;
   end;
-
-  cbView.ItemIndex := FFolderStyle.ToInteger;
 end;
 
 procedure TwPhotoCollection.SetRootFolder;
@@ -142,8 +197,8 @@ begin
 
   velFotos.RootFolder := rfCustom;
   velFotos.RootFolderCustomPath := ApplicationSettings.MainCollectionFolder;
-  velFotos.ThumbsManager.StorageRepositoryFolder := ApplicationSettings.ThumbnailsFoldername;
-  TThumbnailStorage.Initialize;
+  velFotos.ThumbsManager.StorageRepositoryFolder := ApplicationSettings.DataFoldername;
+  TDataStorage.Initialize;
 
   vetFolders.Active := true;
   velFotos.Active := true;
@@ -154,7 +209,7 @@ end;
 
 procedure TwPhotoCollection.UpdatePreview;
 begin
-  if FFolderStyle = cfsPreview then
+  if ApplicationSettings.PhotoCollectionFolderStyle = cfsPreview then
     FViewer.LoadFromFile(velFotos.SelectedPath);
 end;
 

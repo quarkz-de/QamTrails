@@ -29,6 +29,7 @@ object wMain: TwMain
   GlassFrame.Enabled = True
   GlassFrame.Top = 31
   OldCreateOrder = False
+  ShowHint = True
   StyleElements = [seFont, seClient]
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -158,7 +159,7 @@ object wMain: TwMain
     object mbMain: TActionMainMenuBar
       Left = 32
       Top = 0
-      Width = 257
+      Width = 90
       Height = 24
       UseSystemFont = False
       ActionManager = amActions
@@ -212,6 +213,42 @@ object wMain: TwMain
         CollectionName = '004_FilmRoll'
         Disabled = False
         Name = '004_FilmRoll'
+      end
+      item
+        CollectionIndex = 5
+        CollectionName = '005_Thumbnails'
+        Disabled = False
+        Name = '005_Thumbnails'
+      end
+      item
+        CollectionIndex = 6
+        CollectionName = '006_List'
+        Disabled = False
+        Name = '006_List'
+      end
+      item
+        CollectionIndex = 7
+        CollectionName = '007_Full_Image'
+        Disabled = False
+        Name = '007_Full_Image'
+      end
+      item
+        CollectionIndex = 8
+        CollectionName = '008_Delete'
+        Disabled = False
+        Name = '008_Delete'
+      end
+      item
+        CollectionIndex = 9
+        CollectionName = '009_Edit'
+        Disabled = False
+        Name = '009_Edit'
+      end
+      item
+        CollectionIndex = 10
+        CollectionName = '010_Add_To_Album'
+        Disabled = False
+        Name = '010_Add_To_Album'
       end>
     ImageCollection = dmCommon.icDarkIcons
     Width = 32
@@ -324,6 +361,42 @@ object wMain: TwMain
         CollectionName = '004_FilmRoll'
         Disabled = False
         Name = '004_FilmRoll'
+      end
+      item
+        CollectionIndex = 5
+        CollectionName = '005_Thumbnails'
+        Disabled = False
+        Name = '005_Thumbnails'
+      end
+      item
+        CollectionIndex = 6
+        CollectionName = '006_List'
+        Disabled = False
+        Name = '006_List'
+      end
+      item
+        CollectionIndex = 7
+        CollectionName = '007_Full_Image'
+        Disabled = False
+        Name = '007_Full_Image'
+      end
+      item
+        CollectionIndex = 8
+        CollectionName = '008_Delete'
+        Disabled = False
+        Name = '008_Delete'
+      end
+      item
+        CollectionIndex = 9
+        CollectionName = '009_Edit'
+        Disabled = False
+        Name = '009_Edit'
+      end
+      item
+        CollectionIndex = 10
+        CollectionName = '010_Add_To_Album'
+        Disabled = False
+        Name = '010_Add_To_Album'
       end>
     ImageCollection = dmCommon.icDarkIcons
     Left = 476

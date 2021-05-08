@@ -6,7 +6,11 @@ object wPhotoCollection: TwPhotoCollection
   ClientHeight = 454
   ClientWidth = 786
   Color = clBtnFace
-  ParentFont = True
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
   OldCreateOrder = False
   OnCreate = FormCreate
   PixelsPerInch = 96
@@ -14,7 +18,7 @@ object wPhotoCollection: TwPhotoCollection
   object Splitter1: TSplitter
     Left = 200
     Top = 29
-    Height = 425
+    Height = 406
     ExplicitLeft = 392
     ExplicitTop = 176
     ExplicitHeight = 100
@@ -23,12 +27,12 @@ object wPhotoCollection: TwPhotoCollection
     Left = 0
     Top = 29
     Width = 200
-    Height = 425
+    Height = 406
     Active = False
     Align = alLeft
     BorderStyle = bsNone
     ColumnDetails = cdUser
-    DefaultNodeHeight = 17
+    DefaultNodeHeight = 19
     DragHeight = 250
     DragWidth = 150
     FileObjects = [foFolders, foHidden, foEnableAsync]
@@ -52,68 +56,41 @@ object wPhotoCollection: TwPhotoCollection
     TreeOptions.VETImageOptions = [toImages, toThreadedImages, toMarkCutAndCopy]
     OnChange = vetFoldersChange
     OnEnumFolder = vetFoldersEnumFolder
+    ExplicitHeight = 425
     Columns = <>
-  end
-  object ToolBar1: TToolBar
-    Left = 0
-    Top = 0
-    Width = 786
-    Height = 29
-    Caption = 'ToolBar1'
-    TabOrder = 1
-    object ToolButton1: TToolButton
-      Left = 0
-      Top = 0
-      Caption = 'ToolButton1'
-      ImageIndex = 0
-    end
-    object ToolButton2: TToolButton
-      Left = 23
-      Top = 0
-      Caption = 'ToolButton2'
-      ImageIndex = 1
-    end
-    object cbView: TComboBox
-      Left = 46
-      Top = 0
-      Width = 145
-      Height = 21
-      Style = csDropDownList
-      TabOrder = 0
-      OnChange = cbViewChange
-    end
   end
   object pnContent: TPanel
     Left = 203
     Top = 29
     Width = 583
-    Height = 425
+    Height = 406
     Align = alClient
     BevelOuter = bvNone
     Caption = 'pnContent'
     ShowCaption = False
-    TabOrder = 2
+    TabOrder = 1
+    ExplicitHeight = 372
     object velFotos: TVirtualExplorerEasyListview
       Left = 0
       Top = 0
       Width = 583
-      Height = 152
+      Height = 133
       Align = alClient
       BorderStyle = bsNone
       CompressedFile.Color = clRed
-      CompressedFile.Font.Charset = DEFAULT_CHARSET
+      CompressedFile.Font.Charset = ANSI_CHARSET
       CompressedFile.Font.Color = clWindowText
       CompressedFile.Font.Height = -11
       CompressedFile.Font.Name = 'Tahoma'
       CompressedFile.Font.Style = []
       DefaultSortColumn = 0
-      EditManager.Font.Charset = DEFAULT_CHARSET
+      EditManager.Font.Charset = ANSI_CHARSET
       EditManager.Font.Color = clWindowText
       EditManager.Font.Height = -11
       EditManager.Font.Name = 'Tahoma'
       EditManager.Font.Style = []
       EncryptedFile.Color = 32832
-      EncryptedFile.Font.Charset = DEFAULT_CHARSET
+      EncryptedFile.Font.Charset = ANSI_CHARSET
       EncryptedFile.Font.Color = clWindowText
       EncryptedFile.Font.Height = -11
       EncryptedFile.Font.Name = 'Tahoma'
@@ -133,10 +110,11 @@ object wPhotoCollection: TwPhotoCollection
       View = elsThumbnail
       OnEnumFolder = velFotosEnumFolder
       OnItemSelectionChanged = velFotosItemSelectionChanged
+      ExplicitLeft = 3
     end
     object pnPreview: TPanel
       Left = 0
-      Top = 152
+      Top = 133
       Width = 583
       Height = 273
       Align = alBottom
@@ -144,6 +122,191 @@ object wPhotoCollection: TwPhotoCollection
       Caption = 'pnPreview'
       ShowCaption = False
       TabOrder = 1
+      ExplicitLeft = 3
+      ExplicitTop = 99
+    end
+  end
+  object tbToolbar: TToolBar
+    Left = 0
+    Top = 0
+    Width = 786
+    Height = 29
+    ButtonHeight = 30
+    ButtonWidth = 31
+    Caption = 'tbToolbar'
+    Images = vilIcons
+    TabOrder = 2
+    object tbViewThumbnails: TToolButton
+      Left = 0
+      Top = 0
+      Action = acViewThumbnails
+      Style = tbsCheck
+    end
+    object tbViewPreview: TToolButton
+      Left = 31
+      Top = 0
+      Action = acViewPreview
+      Style = tbsCheck
+    end
+    object tbViewDetails: TToolButton
+      Left = 62
+      Top = 0
+      Action = acViewDetails
+      Style = tbsCheck
+    end
+    object tbDivider1: TToolButton
+      Left = 93
+      Top = 0
+      Width = 8
+      Caption = 'tbDivider1'
+      Style = tbsSeparator
+    end
+    object tbActiveAlbum: TToolButton
+      Left = 101
+      Top = 0
+      Action = acActiveAlbum
+      Style = tbsDropDown
+    end
+    object ToolButton1: TToolButton
+      Left = 147
+      Top = 0
+      Action = acAddToActiveAlbum
+    end
+  end
+  object sbStatus: TStatusBar
+    Left = 0
+    Top = 435
+    Width = 786
+    Height = 19
+    Panels = <
+      item
+        Text = 'Album'
+        Width = 50
+      end
+      item
+        Width = 200
+      end>
+    SizeGrip = False
+    ExplicitLeft = 616
+    ExplicitTop = 436
+    ExplicitWidth = 0
+  end
+  object vilIcons: TVirtualImageList
+    AutoFill = True
+    DisabledGrayscale = False
+    DisabledSuffix = '_Disabled'
+    Images = <
+      item
+        CollectionIndex = 0
+        CollectionName = '000_Menu'
+        Disabled = False
+        Name = '000_Menu'
+      end
+      item
+        CollectionIndex = 1
+        CollectionName = '001_Home'
+        Disabled = False
+        Name = '001_Home'
+      end
+      item
+        CollectionIndex = 2
+        CollectionName = '002_Settings'
+        Disabled = False
+        Name = '002_Settings'
+      end
+      item
+        CollectionIndex = 3
+        CollectionName = '003_Gallery'
+        Disabled = False
+        Name = '003_Gallery'
+      end
+      item
+        CollectionIndex = 4
+        CollectionName = '004_FilmRoll'
+        Disabled = False
+        Name = '004_FilmRoll'
+      end
+      item
+        CollectionIndex = 5
+        CollectionName = '005_Thumbnails'
+        Disabled = False
+        Name = '005_Thumbnails'
+      end
+      item
+        CollectionIndex = 6
+        CollectionName = '006_List'
+        Disabled = False
+        Name = '006_List'
+      end
+      item
+        CollectionIndex = 7
+        CollectionName = '007_Full_Image'
+        Disabled = False
+        Name = '007_Full_Image'
+      end
+      item
+        CollectionIndex = 8
+        CollectionName = '008_Delete'
+        Disabled = False
+        Name = '008_Delete'
+      end
+      item
+        CollectionIndex = 9
+        CollectionName = '009_Edit'
+        Disabled = False
+        Name = '009_Edit'
+      end
+      item
+        CollectionIndex = 10
+        CollectionName = '010_Add_To_Album'
+        Disabled = False
+        Name = '010_Add_To_Album'
+      end>
+    ImageCollection = dmCommon.icDarkIcons
+    Width = 24
+    Height = 24
+    Left = 23
+    Top = 85
+  end
+  object alActions: TActionList
+    Images = vilIcons
+    Left = 60
+    Top = 84
+    object acViewThumbnails: TAction
+      Checked = True
+      GroupIndex = 1
+      Hint = 'Ansicht als Raster'
+      ImageIndex = 5
+      ImageName = '005_Thumbnails'
+      OnExecute = acViewThumbnailsExecute
+    end
+    object acViewPreview: TAction
+      GroupIndex = 1
+      Hint = 'Vorschau-Ansicht'
+      ImageIndex = 7
+      ImageName = '007_Full_Image'
+      OnExecute = acViewPreviewExecute
+    end
+    object acViewDetails: TAction
+      GroupIndex = 1
+      Hint = 'Detail-Ansicht'
+      ImageIndex = 6
+      ImageName = '006_List'
+      OnExecute = acViewDetailsExecute
+    end
+    object acActiveAlbum: TAction
+      Caption = 'acActiveAlbum'
+      Hint = 'Aktives Album ausw'#228'hlen'
+      ImageIndex = 3
+      ImageName = '003_Gallery'
+      OnExecute = acActiveAlbumExecute
+    end
+    object acAddToActiveAlbum: TAction
+      Caption = 'acAddToActiveAlbum'
+      Hint = 'Dem aktuellen Album hinzuf'#252'gen'
+      ImageIndex = 10
+      ImageName = '010_Add_To_Album'
+      OnExecute = acAddToActiveAlbumExecute
     end
   end
 end

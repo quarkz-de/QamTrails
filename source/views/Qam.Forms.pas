@@ -3,11 +3,13 @@ unit Qam.Forms;
 interface
 
 uses
-  System.Generics.Collections, System.Generics.Defaults,
   Vcl.Forms, Vcl.Controls;
 
 type
-  TApplicationForm = class(TForm);
+  TApplicationForm = class(TForm)
+  public
+    procedure InitializeForm; virtual;
+  end;
 
   TApplicationFormType = (aftWelcome, aftSettings, aftPhotoCollection,
     aftAlbums);
@@ -29,6 +31,13 @@ implementation
 uses
   Qam.WelcomeForm, Qam.SettingsForm, Qam.PhotoCollection,
   Qam.Albums;
+
+{ TApplicationForm }
+
+procedure TApplicationForm.InitializeForm;
+begin
+
+end;
 
 { TApplicationFormList }
 
@@ -52,6 +61,7 @@ begin
     begin
       Form.Font := FParent.Font;
       Form.BorderStyle := bsNone;
+      Form.InitializeForm;
     end;
 end;
 

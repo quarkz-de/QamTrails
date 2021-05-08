@@ -3,8 +3,7 @@ unit Qam.Events;
 interface
 
 uses
-  EventBus,
-  Qam.Settings;
+  Qam.Settings, Qam.Database, Qam.PhotoAlbum;
 
 type
   IThemeChangeEvent = interface
@@ -23,12 +22,36 @@ type
     property Value: TApplicationSettingValue read GetValue;
   end;
 
+  IDatabaseLoadEvent = interface
+    ['{809E5E24-788C-45E4-A094-F6DA49455487}']
+    function GetDatabase: IQamTrailsDatabase;
+    property Database: IQamTrailsDatabase read GetDatabase;
+  end;
+
+  IActiveAlbumChangeEvent = interface
+    ['{893EB4AD-D972-4E91-B480-A6E44965F1A8}']
+    function GetAlbum: TPhotoAlbum;
+    property Album: TPhotoAlbum read GetAlbum;
+  end;
+
+  INewAlbumEvent = interface
+    ['{B27A31A7-C403-4557-88DA-1F2E207140A3}']
+    function GetAlbum: TPhotoAlbum;
+    property Album: TPhotoAlbum read GetAlbum;
+  end;
+
   TEventFactory = class
   public
     class function NewSettingChangeEvent(
       const AValue: TApplicationSettingValue): ISettingChangeEvent;
     class function NewThemeChangeEvent(
       const AThemeName: String; const AIsDark: Boolean): IThemeChangeEvent;
+    class function NewDatabaseLoadEvent(
+      const ADatabase: IQamTrailsDatabase): IDatabaseLoadEvent;
+    class function NewActiveAlbumChangeEvent(
+      const AAlbum: TPhotoAlbum): IActiveAlbumChangeEvent;
+    class function NewNewAlbumEvent(
+      const AAlbum: TPhotoAlbum): INewAlbumEvent;
   end;
 
 implementation
@@ -58,6 +81,68 @@ type
     constructor Create(const AValue: TApplicationSettingValue);
     property Value: TApplicationSettingValue read GetValue;
   end;
+
+  TDatabaseLoadEvent = class(TInterfacedObject, IDatabaseLoadEvent)
+  private
+    FDatabase: IQamTrailsDatabase;
+  protected
+    function GetDatabase: IQamTrailsDatabase;
+  public
+    constructor Create(const ADatabase: IQamTrailsDatabase);
+    property Database: IQamTrailsDatabase read GetDatabase;
+  end;
+
+  TActiveAlbumChangeEvent = class(TInterfacedObject, IActiveAlbumChangeEvent)
+  private
+    FAlbum: TPhotoAlbum;
+  protected
+    function GetAlbum: TPhotoAlbum;
+  public
+    constructor Create(const AAlbum: TPhotoAlbum);
+    property Album: TPhotoAlbum read GetAlbum;
+  end;
+
+  TNewAlbumEvent = class(TInterfacedObject, INewAlbumEvent)
+  private
+    FAlbum: TPhotoAlbum;
+  protected
+    function GetAlbum: TPhotoAlbum;
+  public
+    constructor Create(const AAlbum: TPhotoAlbum);
+    property Album: TPhotoAlbum read GetAlbum;
+  end;
+
+{ TEventFactory }
+
+class function TEventFactory.NewActiveAlbumChangeEvent(
+  const AAlbum: TPhotoAlbum): IActiveAlbumChangeEvent;
+begin
+  Result := TActiveAlbumChangeEvent.Create(AAlbum);
+end;
+
+class function TEventFactory.NewDatabaseLoadEvent(
+  const ADatabase: IQamTrailsDatabase): IDatabaseLoadEvent;
+begin
+  Result := TDatabaseLoadEvent.Create(ADatabase);
+end;
+
+class function TEventFactory.NewNewAlbumEvent(
+  const AAlbum: TPhotoAlbum): INewAlbumEvent;
+begin
+  Result := TNewAlbumEvent.Create(AAlbum);
+end;
+
+class function TEventFactory.NewSettingChangeEvent(
+  const AValue: TApplicationSettingValue): ISettingChangeEvent;
+begin
+  Result := TSettingChangeEvent.Create(AValue);
+end;
+
+class function TEventFactory.NewThemeChangeEvent(const AThemeName: String;
+  const AIsDark: Boolean): IThemeChangeEvent;
+begin
+  Result := TThemeChangeEvent.Create(AThemeName, AIsDark);
+end;
 
 { TThemeChangeEvent }
 
@@ -97,18 +182,43 @@ begin
   Result := FValue;
 end;
 
-{ TEventFactory }
+{ TDatabaseLoadEvent }
 
-class function TEventFactory.NewSettingChangeEvent(
-  const AValue: TApplicationSettingValue): ISettingChangeEvent;
+constructor TDatabaseLoadEvent.Create(const ADatabase: IQamTrailsDatabase);
 begin
-  Result := TSettingChangeEvent.Create(AValue);
+  inherited Create;
+  FDatabase := ADatabase;
 end;
 
-class function TEventFactory.NewThemeChangeEvent(const AThemeName: String;
-  const AIsDark: Boolean): IThemeChangeEvent;
+function TDatabaseLoadEvent.GetDatabase: IQamTrailsDatabase;
 begin
-  Result := TThemeChangeEvent.Create(AThemeName, AIsDark);
+  Result := FDatabase;
+end;
+
+{ TActiveAlbumChangeEvent }
+
+constructor TActiveAlbumChangeEvent.Create(const AAlbum: TPhotoAlbum);
+begin
+  inherited Create;
+  FAlbum := AAlbum;
+end;
+
+function TActiveAlbumChangeEvent.GetAlbum: TPhotoAlbum;
+begin
+  Result := FAlbum;
+end;
+
+{ TNewAlbumEvent }
+
+constructor TNewAlbumEvent.Create(const AAlbum: TPhotoAlbum);
+begin
+  inherited Create;
+  FAlbum := AAlbum;
+end;
+
+function TNewAlbumEvent.GetAlbum: TPhotoAlbum;
+begin
+  Result := FAlbum;
 end;
 
 end.
