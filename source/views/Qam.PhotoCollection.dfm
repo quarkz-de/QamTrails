@@ -56,7 +56,6 @@ object wPhotoCollection: TwPhotoCollection
     TreeOptions.VETImageOptions = [toImages, toThreadedImages, toMarkCutAndCopy]
     OnChange = vetFoldersChange
     OnEnumFolder = vetFoldersEnumFolder
-    ExplicitHeight = 425
     Columns = <>
   end
   object pnContent: TPanel
@@ -69,7 +68,6 @@ object wPhotoCollection: TwPhotoCollection
     Caption = 'pnContent'
     ShowCaption = False
     TabOrder = 1
-    ExplicitHeight = 372
     object velFotos: TVirtualExplorerEasyListview
       Left = 0
       Top = 0
@@ -100,6 +98,7 @@ object wPhotoCollection: TwPhotoCollection
       FileSizeFormat = vfsfDefault
       Grouped = False
       GroupingColumn = 0
+      OnRebuiltShellHeader = velFotosRebuiltShellHeader
       PaintInfoGroup.MarginBottom.CaptionIndent = 4
       PaintInfoGroup.MarginTop.Visible = False
       Sort.Algorithm = esaQuickSort
@@ -110,7 +109,6 @@ object wPhotoCollection: TwPhotoCollection
       View = elsThumbnail
       OnEnumFolder = velFotosEnumFolder
       OnItemSelectionChanged = velFotosItemSelectionChanged
-      ExplicitLeft = 3
     end
     object pnPreview: TPanel
       Left = 0
@@ -122,8 +120,6 @@ object wPhotoCollection: TwPhotoCollection
       Caption = 'pnPreview'
       ShowCaption = False
       TabOrder = 1
-      ExplicitLeft = 3
-      ExplicitTop = 99
     end
   end
   object tbToolbar: TToolBar
@@ -187,9 +183,6 @@ object wPhotoCollection: TwPhotoCollection
         Width = 200
       end>
     SizeGrip = False
-    ExplicitLeft = 616
-    ExplicitTop = 436
-    ExplicitWidth = 0
   end
   object vilIcons: TVirtualImageList
     AutoFill = True

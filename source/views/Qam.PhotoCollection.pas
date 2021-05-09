@@ -46,6 +46,8 @@ type
       Namespace: TNamespace; var AllowAsChild: Boolean);
     procedure velFotosItemSelectionChanged(Sender: TCustomEasyListview; Item:
         TEasyItem);
+    procedure velFotosRebuiltShellHeader(Sender:
+        TCustomVirtualExplorerEasyListview);
     procedure vetFoldersChange(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure vetFoldersEnumFolder(Sender: TCustomVirtualExplorerTree; Namespace:
         TNamespace; var AllowAsChild: Boolean);
@@ -184,6 +186,11 @@ begin
         acViewDetails.Checked := true;
       end;
   end;
+
+  velFotos.Header.ShowInAllViews := velFotos.View = elsReportThumb;
+
+  if velFotos.Selection.FocusedItem <> nil then
+    velFotos.Selection.FocusedItem.MakeVisible(emvAuto);
 end;
 
 procedure TwPhotoCollection.SetRootFolder;
@@ -241,6 +248,13 @@ procedure TwPhotoCollection.velFotosItemSelectionChanged(Sender:
   TCustomEasyListview; Item: TEasyItem);
 begin
   UpdatePreview;
+end;
+
+procedure TwPhotoCollection.velFotosRebuiltShellHeader(
+  Sender: TCustomVirtualExplorerEasyListview);
+begin
+  // Die Spalte "Dateityp" wird immer ausgeblendet.
+  velFotos.Header.Columns[2].Visible := false;
 end;
 
 procedure TwPhotoCollection.vetFoldersChange(Sender: TBaseVirtualTree;
