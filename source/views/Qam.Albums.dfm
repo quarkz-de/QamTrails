@@ -13,6 +13,7 @@ object wAlbums: TwAlbums
   Font.Style = []
   OldCreateOrder = False
   OnCreate = FormCreate
+  OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 13
   object spSplitter: TSplitter
@@ -30,15 +31,16 @@ object wAlbums: TwAlbums
     Height = 309
     Align = alClient
     BorderStyle = bsNone
+    ItemWidth = 300
     ItemMargins.Left = 0
     ItemMargins.Top = 0
     ItemMargins.Right = 0
     ItemMargins.Bottom = 0
+    ColumnLayout = cltMultiTopToBottom
     ParentColor = False
     TabOrder = 0
     OnBeforeDrawItem = clFotosBeforeDrawItem
     OnShowControl = clFotosShowControl
-    ExplicitLeft = 211
     object txFilename: TLabel
       Left = 108
       Top = 4
@@ -47,7 +49,7 @@ object wAlbums: TwAlbums
       Caption = 'txFilename'
     end
     object btEdit: TControlListButton
-      Left = 371
+      Left = 228
       Top = 32
       Width = 34
       Height = 33
@@ -57,10 +59,9 @@ object wAlbums: TwAlbums
       ImageName = '009_Edit'
       LinkHotColor = clHighlight
       Style = clbkToolButton
-      ExplicitLeft = 228
     end
     object btDelete: TControlListButton
-      Left = 406
+      Left = 263
       Top = 32
       Width = 34
       Height = 33
@@ -70,7 +71,6 @@ object wAlbums: TwAlbums
       ImageName = '008_Delete'
       LinkHotColor = clHighlight
       Style = clbkToolButton
-      ExplicitLeft = 263
     end
   end
   object stAlbums: TVirtualStringTree

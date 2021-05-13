@@ -5,14 +5,15 @@ interface
 uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.ImageList,
-  System.Actions,
+  System.Actions, System.Math,
   Generics.Collections,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   Vcl.ExtCtrls, Vcl.ControlList, Vcl.ToolWin, Vcl.ComCtrls, Vcl.ImgList,
   Vcl.VirtualImageList, Vcl.ActnList,
   Eventbus,
   VirtualTrees,
-  Qam.Forms, Qam.Events, Qam.PhotoAlbum, Qam.AlbumsVisualizer;
+  Qam.Forms, Qam.Events, Qam.PhotoAlbum, Qam.AlbumsVisualizer, MPCommonObjects,
+  EasyListview, VirtualExplorerEasyListview;
 
 type
   TwAlbums = class(TApplicationForm)
@@ -33,6 +34,7 @@ type
     procedure clFotosShowControl(const AIndex: Integer; AControl: TControl; var
         AVisible: Boolean);
     procedure FormCreate(Sender: TObject);
+    procedure FormResize(Sender: TObject);
     procedure stAlbumsFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode;
         Column: TColumnIndex);
   private
@@ -80,6 +82,9 @@ procedure TwAlbums.clFotosBeforeDrawItem(AIndex: Integer; ACanvas: TCanvas;
 var
   Fotos: IList<TPhotoItem>;
 begin
+  btDelete.Left := clFotos.ItemWidth - btDelete.Width - 4;
+  btEdit.Left := btDelete.Left - btEdit.Width;
+
   Fotos := ActiveAlbum.Photos;
 
   if AIndex >= Fotos.Count then
@@ -107,6 +112,16 @@ begin
   FAlbumVisualizer := GlobalContainer.Resolve<IPhotoAlbumTreeVisualizer>;
   FAlbumVisualizer.SetVirtualTree(stAlbums);
   LoadAlbums;
+end;
+
+procedure TwAlbums.FormResize(Sender: TObject);
+var
+  W, Margins, ItemCount: Integer;
+begin
+  W := clFotos.ClientWidth;
+  Margins := clFotos.ItemMargins.Left + clFotos.ItemMargins.Right;
+  ItemCount := Max(1, W div 300);
+  clFotos.ItemWidth := (W - ItemCount * Margins) div ItemCount;
 end;
 
 function TwAlbums.GetActiveAlbum: TPhotoAlbum;
