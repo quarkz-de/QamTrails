@@ -84,9 +84,9 @@ begin
   velFotos.BeginUpdate;
   try
     velFotos.Clear;
-    for I := 0 to ActiveAlbum.Count - 1 do
+    for I := 0 to ActiveAlbum.Filenames.Count - 1 do
       begin
-        PIDL := PathToPIDL(ActiveAlbum[I]);
+        PIDL := PathToPIDL(ActiveAlbum.Filenames[I]);
         velFotos.AddCustomItem(nil, TNamespace.Create(PIDL, nil), True);
       end;
   finally
@@ -180,6 +180,7 @@ begin
         // velFotos.SelectedPaths aus dem Album entfernen
         DoDefault := false;
       end;
+  end;
 end;
 
 procedure TwAlbums.velFotosOLEDragDrop(Sender: TCustomEasyListview;
@@ -199,7 +200,7 @@ begin
           begin
             for I := 0 to HDrop.FileCount - 1 do
               begin
-                ActiveAlbum.Add(HDrop.FileName(I));
+                ActiveAlbum.Filenames.Add(HDrop.FileName(I));
                 GlobalEventBus.Post(TEventFactory.NewNewAlbumItemEvent(ActiveAlbum, HDrop.FileName(I)));
               end;
             DesiredDropEffect := cdeCopy;

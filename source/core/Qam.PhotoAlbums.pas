@@ -3,36 +3,32 @@ unit Qam.PhotoAlbums;
 interface
 
 uses
-  System.SysUtils, System.Classes, System.IOUtils, System.StrUtils,
+  System.SysUtils, System.Classes, System.IOUtils, System.StrUtils, System.JSON,
   Generics.Collections,
+  Neon.Core.Persistence, Neon.Core.Persistence.JSON, Neon.Core.Attributes,
   Spring, Spring.Collections, Spring.Container;
 
 type
-  TPhotoAlbum = class(TObject)
+  TPhotoAlbum = class(TPersistent)
   private
     FFilenames: TStringList;
     FModified: Boolean;
     FName: String;
     FFilename: String;
-    function GetItems(Index: Integer): String;
-    function GetCount: Integer;
     function GetFilename: String;
     procedure SetName(const AValue: String);
+    procedure SetFilenames(const AValue: TStringList);
+    procedure FilenamesChange(Sender: TObject);
   public
     constructor Create;
     destructor Destroy; override;
-    function Add(const AFilename: String): Integer;
-    procedure Delete(const AFilename: String); overload;
-    procedure Delete(const AIndex: Integer); overload;
-    function IndexOf(const AFilename: String): Integer;
-    procedure Clear;
-    procedure BeginUpdate;
-    procedure EndUpdate;
-    property Items[Index: Integer]: String read GetItems; default;
-    property Count: Integer read GetCount;
-    property Name: String read FName write SetName;
+    [NeonIgnore]
     property Filename: String read GetFilename write FFilename;
+    [NeonIgnore]
     property Modified: Boolean read FModified write FModified;
+  published
+    property Name: String read FName write SetName;
+    property Filenames: TStringList read FFilenames write SetFilenames;
   end;
 
   IPhotoAlbumCollection = interface
@@ -61,17 +57,7 @@ uses
   Qodelib.IOUtils,
   Qam.Settings;
 
-const
-  SAlbumFileVersion = '#version: ';
-  SAlbumName = '#name: ';
-
 type
-  TPhotoAlbumSerializer = class
-  public
-    class procedure Deserialize(const AAlbum: TPhotoAlbum);
-    class procedure Serialize(const AAlbum: TPhotoAlbum);
-  end;
-
   TPhotoAlbumHelper = class
   private
     class function CompactFilename(const AFilename, ABasePath: String): String;
@@ -86,41 +72,13 @@ type
 
 { TPhotoAlbum }
 
-function TPhotoAlbum.Add(const AFilename: String): Integer;
-begin
-  Result := FFilenames.Add(AFilename);
-  Modified := true;
-end;
-
-procedure TPhotoAlbum.BeginUpdate;
-begin
-  FFilenames.BeginUpdate;
-end;
-
-procedure TPhotoAlbum.Clear;
-begin
-  FFilenames.Clear;
-  Modified := true;
-end;
-
 constructor TPhotoAlbum.Create;
 begin
   inherited Create;
   FFilenames := TStringList.Create;
   FFilenames.Sorted := true;
   FFilenames.Duplicates := dupIgnore;
-  Modified := true;
-end;
-
-procedure TPhotoAlbum.Delete(const AIndex: Integer);
-begin
-  FFilenames.Delete(AIndex);
-  Modified := true;
-end;
-
-procedure TPhotoAlbum.Delete(const AFilename: String);
-begin
-  FFilenames.Delete(IndexOf(AFilename));
+  FFilenames.OnChange := FilenamesChange;
   Modified := true;
 end;
 
@@ -130,14 +88,9 @@ begin
   inherited;
 end;
 
-procedure TPhotoAlbum.EndUpdate;
+procedure TPhotoAlbum.FilenamesChange(Sender: TObject);
 begin
-  FFilenames.EndUpdate;
-end;
-
-function TPhotoAlbum.GetCount: Integer;
-begin
-  Result := FFilenames.Count;
+  Modified := true;
 end;
 
 function TPhotoAlbum.GetFilename: String;
@@ -147,14 +100,10 @@ begin
   Result := FFilename;
 end;
 
-function TPhotoAlbum.GetItems(Index: Integer): String;
+procedure TPhotoAlbum.SetFilenames(const AValue: TStringList);
 begin
-  Result := FFilenames[Index];
-end;
-
-function TPhotoAlbum.IndexOf(const AFilename: String): Integer;
-begin
-  Result := FFilenames.IndexOf(AFilename);
+  FFilenames := AValue;
+  Modified := false;
 end;
 
 procedure TPhotoAlbum.SetName(const AValue: String);
@@ -190,6 +139,8 @@ var
   Album: TPhotoAlbum;
   Files: TStringDynArray;
   Filename: String;
+  JSON: TJSONValue;
+  Strings: TStringList;
 begin
   FList.Clear;
 
@@ -197,8 +148,16 @@ begin
   for Filename in Files do
     begin
       Album := TPhotoAlbum.Create;
+      if FileExists(Filename) then
+        begin
+          Strings := TStringList.Create;
+          Strings.LoadFromFile(Filename);
+          JSON := TJSONObject.ParseJSONValue(Strings.Text);
+          TNeon.JSONToObject(Album, JSON, TNeonConfiguration.Default);
+          JSON.Free;
+          Strings.Free;
+        end;
       Album.Filename := Filename;
-      TPhotoAlbumSerializer.Deserialize(Album);
       Albums.Add(Album);
       Album.Modified := false;
     end;
@@ -210,67 +169,20 @@ end;
 procedure TPhotoAlbumCollection.SaveAlbumList;
 var
   Album: TPhotoAlbum;
+var
+  JSON: TJSONValue;
+  Stream: TFileStream;
 begin
   for Album in Albums do
     if Album.Modified then
       begin
-        TPhotoAlbumSerializer.Serialize(Album);
+        JSON := TNeon.ObjectToJSON(Album);
+        Stream := TFileStream.Create(Album.Filename, fmCreate);
+        TNeon.PrintToStream(JSON, Stream, true);
+        Stream.Free;
+        JSON.Free;
         Album.Modified := false;
       end;
-end;
-
-{ TPhotoAlbumSerializer }
-
-class procedure TPhotoAlbumSerializer.Deserialize(const AAlbum: TPhotoAlbum);
-var
-  Filelist: TStringList;
-  Line, Filename: String;
-begin
-  AAlbum.BeginUpdate;
-  AAlbum.Clear;
-
-  if TFile.Exists(AAlbum.Filename) then
-    begin
-      Filelist := TStringList.Create;
-      Filelist.LoadFromFile(AAlbum.Filename);
-
-      for Line in Filelist do
-        begin
-          if StartsText(SAlbumName, Line) then
-            begin
-              AAlbum.Name := Copy(Line, Length(SAlbumname) + 1, Length(Line) - Length(SAlbumname));
-            end
-          else if not StartsText('#', Line) then
-            begin
-              Filename := TPhotoAlbumHelper.ExpandFotoFilename(Line);
-              if TFile.Exists(Filename) then
-                AAlbum.Add(Filename);
-            end;
-        end;
-
-      Filelist.Free;
-    end;
-
-  AAlbum.EndUpdate;
-end;
-
-class procedure TPhotoAlbumSerializer.Serialize(const AAlbum: TPhotoAlbum);
-var
-  Filelist: TStringList;
-  I: Integer;
-begin
-  Filelist := TStringList.Create;
-  Filelist.BeginUpdate;
-
-  Filelist.Add(SAlbumFileVersion + '1');
-  Filelist.Add(SAlbumName + AAlbum.Name);
-
-  for I := 0 to AAlbum.Count - 1 do
-    Filelist.Add(TPhotoAlbumHelper.CompactFotoFilename(AAlbum[I]));
-
-  Filelist.EndUpdate;
-  Filelist.SaveToFile(AAlbum.Filename);
-  Filelist.Free;
 end;
 
 { TPhotoAlbumHelper }

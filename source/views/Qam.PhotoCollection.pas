@@ -91,7 +91,7 @@ procedure TwPhotoCollection.acAddToActiveAlbumExecute(Sender: TObject);
 begin
   if Assigned(ActiveAlbum) then
     begin
-      ActiveAlbum.Add(velFotos.SelectedPath);
+      ActiveAlbum.Filenames.Add(velFotos.SelectedPath);
       GlobalEventBus.Post(TEventFactory.NewNewAlbumItemEvent(ActiveAlbum, velFotos.SelectedPath));
     end
   else
