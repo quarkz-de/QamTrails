@@ -105,6 +105,7 @@ object wPhotoCollection: TwPhotoCollection
       PaintInfoGroup.MarginTop.Visible = False
       Sort.Algorithm = esaQuickSort
       Sort.AutoSort = True
+      Selection.MultiSelect = True
       TabOrder = 0
       ThumbsManager.StorageFilename = 'QamTrails.album'
       ThumbsManager.UseExifOrientation = False
@@ -112,6 +113,8 @@ object wPhotoCollection: TwPhotoCollection
       OnEnumFolder = velFotosEnumFolder
       OnItemSelectionChanged = velFotosItemSelectionChanged
       OnOLEDragStart = velFotosOLEDragStart
+      ExplicitLeft = 3
+      ExplicitTop = -2
     end
     object pnPreview: TPanel
       Left = 0
@@ -165,6 +168,7 @@ object wPhotoCollection: TwPhotoCollection
       Top = 4
       Width = 145
       Height = 21
+      Align = alCustom
       Style = csDropDownList
       TabOrder = 0
       OnChange = cbAlbumsChange

@@ -3,7 +3,7 @@ unit Qam.PhotoCollection;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages,
+  Winapi.Windows, Winapi.Messages, Winapi.ActiveX,
   System.SysUtils, System.Variants, System.Classes, System.IOUtils,
   System.ImageList, System.Actions,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
@@ -12,8 +12,7 @@ uses
   Eventbus,
   VirtualTrees, VirtualExplorerEasyListview, VirtualExplorerTree,
   MPCommonObjects, MPShellUtilities, EasyListview, MPCommonUtilities,
-  Qam.Forms, Qam.Events, Qam.PhotoViewer, Qam.Types, Qam.PhotoAlbums,
-  Winapi.ActiveX;
+  Qam.Forms, Qam.Events, Qam.PhotoViewer, Qam.Types, Qam.PhotoAlbums;
 
 type
   TwPhotoCollection = class(TApplicationForm)
@@ -43,16 +42,15 @@ type
     procedure FormCreate(Sender: TObject);
     procedure velFotosEnumFolder(Sender: TCustomVirtualExplorerEasyListview;
       Namespace: TNamespace; var AllowAsChild: Boolean);
-    procedure velFotosItemSelectionChanged(Sender: TCustomEasyListview; Item:
-        TEasyItem);
-    procedure velFotosOLEDragStart(Sender: TCustomEasyListview; ADataObject:
-        IDataObject; var AvailableEffects: TCommonDropEffects; var AllowDrag:
-        Boolean);
-    procedure velFotosRebuiltShellHeader(Sender:
-        TCustomVirtualExplorerEasyListview);
+    procedure velFotosItemSelectionChanged(Sender: TCustomEasyListview;
+      Item: TEasyItem);
+    procedure velFotosOLEDragStart(Sender: TCustomEasyListview;
+      ADataObject: IDataObject; var AvailableEffects: TCommonDropEffects;
+      var AllowDrag: Boolean);
+    procedure velFotosRebuiltShellHeader(Sender: TCustomVirtualExplorerEasyListview);
     procedure vetFoldersChange(Sender: TBaseVirtualTree; Node: PVirtualNode);
-    procedure vetFoldersEnumFolder(Sender: TCustomVirtualExplorerTree; Namespace:
-        TNamespace; var AllowAsChild: Boolean);
+    procedure vetFoldersEnumFolder(Sender: TCustomVirtualExplorerTree;
+      Namespace: TNamespace; var AllowAsChild: Boolean);
   private
     FViewer: TfrPhotoViewer;
     FActiveAlbum: TPhotoAlbum;
@@ -88,11 +86,19 @@ uses
 { TwPhotoCollection }
 
 procedure TwPhotoCollection.acAddToActiveAlbumExecute(Sender: TObject);
+var
+  Filename: String;
 begin
   if Assigned(ActiveAlbum) then
     begin
-      ActiveAlbum.Filenames.Add(velFotos.SelectedPath);
-      GlobalEventBus.Post(TEventFactory.NewNewAlbumItemEvent(ActiveAlbum, velFotos.SelectedPath));
+      for Filename in velFotos.SelectedPaths do
+        begin
+          if ActiveAlbum.Filenames.IndexOf(Filename) < 0 then
+            begin
+              ActiveAlbum.Filenames.Add(Filename);
+              GlobalEventBus.Post(TEventFactory.NewNewAlbumItemEvent(ActiveAlbum, Filename));
+            end;
+        end;
     end
   else
     ShowMessage('Kein Album ausgewählt.');

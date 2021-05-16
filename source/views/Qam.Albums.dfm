@@ -88,6 +88,7 @@ object wAlbums: TwAlbums
     PaintInfoGroup.MarginTop.Visible = False
     Sort.Algorithm = esaQuickSort
     Sort.AutoSort = True
+    Selection.MultiSelect = True
     TabOrder = 2
     ThumbsManager.StorageFilename = 'Thumbnails.album'
     ThumbsManager.UseExifOrientation = False
