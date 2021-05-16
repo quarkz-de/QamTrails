@@ -27,13 +27,8 @@ uses
   Qam.JpegLoader in 'graphics\Qam.JpegLoader.pas',
   Qam.Storage in 'core\Qam.Storage.pas',
   Qam.Albums in 'views\Qam.Albums.pas' {wAlbums},
-  Qam.PhotoAlbum in 'models\Qam.PhotoAlbum.pas',
-  Qam.Database in 'core\Qam.Database.pas',
-  Qam.DatabaseMigrations in 'core\Qam.DatabaseMigrations.pas',
-  Qam.DatabaseMigrator in 'core\Qam.DatabaseMigrator.pas',
-  Qam.Migrations in 'models\Qam.Migrations.pas',
   Qam.AlbumsVisualizer in 'views\Qam.AlbumsVisualizer.pas',
-  Qam.AlbumSelector in 'views\Qam.AlbumSelector.pas' {wAlbumSelector};
+  Qam.PhotoAlbums in 'core\Qam.PhotoAlbums.pas';
 
 {$R *.res}
 

@@ -7,13 +7,13 @@ uses
   Spring.Collections, Spring.Container,
   VirtualTrees,
   EventBus,
-  Qam.PhotoAlbum, Qam.Database;
+  Qam.PhotoAlbums;
 
 type
   IPhotoAlbumTreeVisualizer = interface
     ['{6CCF634C-86D7-4CFF-8929-AA133A03CCA6}']
     procedure SetVirtualTree(const ATree: TVirtualStringTree);
-    procedure SetPhotoAlbums(const AList: IList<TPhotoAlbum>);
+    procedure SetPhotoAlbums(const AList: IPhotoAlbumCollection);
     procedure UpdateContent;
     function NewAlbum: TPhotoAlbum;
     procedure AddAlbum(const AAlbum: TPhotoAlbum);
@@ -36,7 +36,7 @@ type
   TPhotoAlbumTreeVisualizer = class(TInterfacedObject, IPhotoAlbumTreeVisualizer)
   private
     FTree: TVirtualStringTree;
-    FAlbums: IList<TPhotoAlbum>;
+    FAlbums: IPhotoAlbumCollection;
     procedure GetNodeDataSize(Sender: TBaseVirtualTree; var NodeDataSize:
       Integer);
     procedure GetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -52,7 +52,7 @@ type
     function DoAddAlbum(const AAlbum: TPhotoAlbum): PVirtualNode;
   public
     procedure SetVirtualTree(const ATree: TVirtualStringTree);
-    procedure SetPhotoAlbums(const AList: IList<TPhotoAlbum>);
+    procedure SetPhotoAlbums(const AList: IPhotoAlbumCollection);
     procedure UpdateContent;
     function NewAlbum: TPhotoAlbum;
     procedure AddAlbum(const AAlbum: TPhotoAlbum);
@@ -83,7 +83,6 @@ function TPhotoAlbumTreeVisualizer.DeleteSelectedAlbum: Boolean;
 var
   Data: PAlbumItem;
   Node, NextNode: PVirtualNode;
-  Database: IQamTrailsDatabase;
 begin
   Result := false;
   Node := FTree.FocusedNode;
@@ -96,8 +95,8 @@ begin
         NextNode := Node.Parent;
 
       Data := FTree.GetNodeData(Node);
-      Database := GlobalContainer.Resolve<IQamTrailsDatabase>;
-      Database.GetSession.Delete(Data.Album);
+
+      // todo: Albumlist aktualisieren, Datei löschen
 
       FTree.DeleteNode(Node);
 
@@ -116,7 +115,7 @@ var
 begin
   FTree.BeginUpdate;
 
-  FAlbums.Add(AAlbum);
+  FAlbums.Albums.Add(AAlbum);
 
   Result := FTree.AddChild(nil);
   Data := FTree.GetNodeData(Result);
@@ -193,21 +192,19 @@ end;
 procedure TPhotoAlbumTreeVisualizer.NewText(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Column: TColumnIndex; NewText: string);
 var
-  Database: IQamTrailsDatabase;
   Data: PAlbumItem;
   IsNew: Boolean;
 begin
-  Database := GlobalContainer.Resolve<IQamTrailsDatabase>;
   Data := FTree.GetNodeData(Node);
-  IsNew := Data.Album.Id = 0;
+  IsNew := Data.Album.Filename = '';
   Data.Album.Name := NewText;
-  Database.GetSession.Save(Data.Album);
+
   if IsNew then
     GlobalEventBus.Post(TEventFactory.NewNewAlbumEvent(Data.Album));
 end;
 
 procedure TPhotoAlbumTreeVisualizer.SetPhotoAlbums(
-  const AList: IList<TPhotoAlbum>);
+  const AList: IPhotoAlbumCollection);
 begin
   FAlbums := AList;
 end;
@@ -233,7 +230,7 @@ begin
   FTree.Clear;
   FTree.BeginUpdate;
 
-  for Album in FAlbums do
+  for Album in FAlbums.Albums do
     begin
       Node := FTree.AddChild(nil);
       Data := FTree.GetNodeData(Node);

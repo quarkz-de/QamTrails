@@ -3,7 +3,7 @@ unit Qam.Albums;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages,
+  Winapi.Windows, Winapi.Messages, Winapi.ShlObj, Winapi.ActiveX,
   System.SysUtils, System.Variants, System.Classes, System.ImageList,
   System.Actions, System.Math,
   Generics.Collections,
@@ -12,15 +12,13 @@ uses
   Vcl.VirtualImageList, Vcl.ActnList,
   Eventbus,
   VirtualTrees,
-  Qam.Forms, Qam.Events, Qam.PhotoAlbum, Qam.AlbumsVisualizer, MPCommonObjects,
-  EasyListview, VirtualExplorerEasyListview;
+  EasyListview, VirtualExplorerEasyListview, MPCommonObjects, MPShellUtilities,
+  MPDataObject, MPCommonUtilities, MPShellTypes,
+  Qam.Forms, Qam.Events, Qam.PhotoAlbums, Qam.AlbumsVisualizer,
+  VirtualShellNotifier;
 
 type
   TwAlbums = class(TApplicationForm)
-    clFotos: TControlList;
-    txFilename: TLabel;
-    btEdit: TControlListButton;
-    btDelete: TControlListButton;
     stAlbums: TVirtualStringTree;
     spSplitter: TSplitter;
     tbToolbar: TToolBar;
@@ -28,29 +26,38 @@ type
     alActions: TActionList;
     ToolButton1: TToolButton;
     acNewAlbum: TAction;
+    velFotos: TVirtualMultiPathExplorerEasyListview;
     procedure acNewAlbumExecute(Sender: TObject);
-    procedure clFotosBeforeDrawItem(AIndex: Integer; ACanvas: TCanvas;
-      ARect: TRect; AState: TOwnerDrawState);
-    procedure clFotosShowControl(const AIndex: Integer; AControl: TControl; var
-        AVisible: Boolean);
     procedure FormCreate(Sender: TObject);
-    procedure FormResize(Sender: TObject);
     procedure stAlbumsFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode;
-        Column: TColumnIndex);
+      Column: TColumnIndex);
+    procedure velFotosKeyAction(Sender: TCustomEasyListview; var CharCode: Word;
+        var Shift: TShiftState; var DoDefault: Boolean);
+    procedure velFotosOLEDragDrop(Sender: TCustomEasyListview; DataObject:
+        IDataObject; KeyState: TCommonKeyStates; WindowPt: TPoint;
+        AvailableEffects: TCommonDropEffects; var DesiredDropEffect:
+        TCommonDropEffect; var Handled: Boolean);
+    procedure velFotosOLEDragEnter(Sender: TCustomEasyListview; DataObject:
+        IDataObject; KeyState: TCommonKeyStates; WindowPt: TPoint;
+        AvailableEffects: TCommonDropEffects; var DesiredDropEffect:
+        TCommonDropEffect);
   private
     FAlbumVisualizer: IPhotoAlbumTreeVisualizer;
     function GetActiveAlbum: TPhotoAlbum;
-    procedure ThumbnailThreadCompleteEvent(Sender: TObject);
     procedure LoadAlbums;
     procedure AlbumChanged;
+    procedure SetRootFolder;
+    function GetHDropFormat: TFormatEtc;
   public
     property ActiveAlbum: TPhotoAlbum read GetActiveAlbum;
     [Subscribe]
     procedure OnThemeChange(AEvent: IThemeChangeEvent);
     [Subscribe]
-    procedure OnDatabaseLoad(AEvent: IDatabaseLoadEvent);
-    [Subscribe]
     procedure OnNewAlbum(AEvent: INewAlbumEvent);
+    [Subscribe]
+    procedure OnNewAlbumItem(AEvent: INewAlbumItemEvent);
+    [Subscribe]
+    procedure OnSettingChange(AEvent: ISettingChangeEvent);
   end;
 
 var
@@ -62,7 +69,7 @@ implementation
 
 uses
   Spring.Container, Spring.Collections,
-  Qam.DataModule;
+  Qam.DataModule, Qam.Settings;
 
 procedure TwAlbums.acNewAlbumExecute(Sender: TObject);
 begin
@@ -71,39 +78,20 @@ end;
 
 procedure TwAlbums.AlbumChanged;
 var
-  Fotos: IList<TPhotoItem>;
+  PIDL: PItemIDList;
+  I: Integer;
 begin
-  Fotos := ActiveAlbum.Photos;
-  clFotos.ItemCount := Fotos.Count;
-end;
-
-procedure TwAlbums.clFotosBeforeDrawItem(AIndex: Integer; ACanvas: TCanvas;
-  ARect: TRect; AState: TOwnerDrawState);
-var
-  Fotos: IList<TPhotoItem>;
-begin
-  btDelete.Left := clFotos.ItemWidth - btDelete.Width - 4;
-  btEdit.Left := btDelete.Left - btEdit.Width;
-
-  Fotos := ActiveAlbum.Photos;
-
-  if AIndex >= Fotos.Count then
-    Exit;
-
-  txFilename.Caption := Fotos[AIndex].ExtractFilename;
-  if Fotos[AIndex].Thumbnail.IsLoaded then
-    ACanvas.Draw(ARect.Left, ARect.Top, Fotos[AIndex].Thumbnail.Bitmap)
-  else
-    TThumbnailThread.Create(Fotos[AIndex].Thumbnail,
-      (clFotos.ItemHeight * 3) div 2, clFotos.ItemHeight, AIndex,
-      ThumbnailThreadCompleteEvent);
-end;
-
-procedure TwAlbums.clFotosShowControl(const AIndex: Integer;
-  AControl: TControl; var AVisible: Boolean);
-begin
-  if AControl is TControlListButton then
-    AVisible := (AIndex = clFotos.HotItemIndex);
+  velFotos.BeginUpdate;
+  try
+    velFotos.Clear;
+    for I := 0 to ActiveAlbum.Count - 1 do
+      begin
+        PIDL := PathToPIDL(ActiveAlbum[I]);
+        velFotos.AddCustomItem(nil, TNamespace.Create(PIDL, nil), True);
+      end;
+  finally
+    velFotos.EndUpdate;
+  end;
 end;
 
 procedure TwAlbums.FormCreate(Sender: TObject);
@@ -111,17 +99,12 @@ begin
   GlobalEventBus.RegisterSubscriberForEvents(Self);
   FAlbumVisualizer := GlobalContainer.Resolve<IPhotoAlbumTreeVisualizer>;
   FAlbumVisualizer.SetVirtualTree(stAlbums);
-  LoadAlbums;
-end;
 
-procedure TwAlbums.FormResize(Sender: TObject);
-var
-  W, Margins, ItemCount: Integer;
-begin
-  W := clFotos.ClientWidth;
-  Margins := clFotos.ItemMargins.Left + clFotos.ItemMargins.Right;
-  ItemCount := Max(1, W div 300);
-  clFotos.ItemWidth := (W - ItemCount * Margins) div ItemCount;
+  velFotos.ThumbsManager.StorageFilename := 'QamTrails.album';
+  velFotos.ThumbsManager.AutoLoad := true;
+  velFotos.ThumbsManager.AutoSave := true;
+
+  LoadAlbums;
 end;
 
 function TwAlbums.GetActiveAlbum: TPhotoAlbum;
@@ -129,18 +112,22 @@ begin
   Result := FAlbumVisualizer.GetSelectedAlbum;
 end;
 
-procedure TwAlbums.LoadAlbums;
-var
-  Albums: IList<TPhotoAlbum>;
+function TwAlbums.GetHDropFormat: TFormatEtc;
 begin
-  Albums := dmCommon.Database.GetSession.FindAll<TPhotoAlbum>();
-  FAlbumVisualizer.SetPhotoAlbums(Albums);
-  FAlbumVisualizer.UpdateContent;
+  Result.cfFormat := CF_HDROP;
+  Result.ptd := nil;
+  Result.dwAspect := DVASPECT_CONTENT;
+  Result.lindex := -1;
+  Result.tymed := TYMED_HGLOBAL
 end;
 
-procedure TwAlbums.OnDatabaseLoad(AEvent: IDatabaseLoadEvent);
+procedure TwAlbums.LoadAlbums;
+var
+  Albums: IPhotoAlbumCollection;
 begin
-  LoadAlbums;
+  Albums := GlobalContainer.Resolve<IPhotoAlbumCollection>;
+  FAlbumVisualizer.SetPhotoAlbums(Albums);
+  FAlbumVisualizer.UpdateContent;
 end;
 
 procedure TwAlbums.OnNewAlbum(AEvent: INewAlbumEvent);
@@ -148,20 +135,87 @@ begin
   FAlbumVisualizer.AddAlbum(AEvent.Album);
 end;
 
+procedure TwAlbums.OnNewAlbumItem(AEvent: INewAlbumItemEvent);
+var
+  PIDL: PItemIDList;
+begin
+  if AEvent.Album = ActiveAlbum then
+    begin
+      PIDL := PathToPIDL(AEvent.Filename);
+      velFotos.AddCustomItem(nil, TNamespace.Create(PIDL, nil), True);
+    end;
+end;
+
+procedure TwAlbums.OnSettingChange(AEvent: ISettingChangeEvent);
+begin
+  case AEvent.Value of
+    svMainCollectionFolder:
+      SetRootFolder;
+  end;
+end;
+
 procedure TwAlbums.OnThemeChange(AEvent: IThemeChangeEvent);
 begin
   vilIcons.ImageCollection := dmCommon.GetImageCollection;
 end;
 
-procedure TwAlbums.stAlbumsFocusChanged(Sender: TBaseVirtualTree; Node:
-    PVirtualNode; Column: TColumnIndex);
+procedure TwAlbums.SetRootFolder;
+begin
+  velFotos.ThumbsManager.StorageRepositoryFolder := ApplicationSettings.DataFoldername;
+end;
+
+procedure TwAlbums.stAlbumsFocusChanged(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex);
 begin
   AlbumChanged;
 end;
 
-procedure TwAlbums.ThumbnailThreadCompleteEvent(Sender: TObject);
+procedure TwAlbums.velFotosKeyAction(Sender: TCustomEasyListview;
+  var CharCode: Word; var Shift: TShiftState; var DoDefault: Boolean);
 begin
-  clFotos.UpdateItem(TThumbnailThread(Sender).ItemIndex);
+  case CharCode of
+    VK_DELETE:
+      begin
+        // todo:
+        // velFotos.SelectedPaths aus dem Album entfernen
+        DoDefault := false;
+      end;
+end;
+
+procedure TwAlbums.velFotosOLEDragDrop(Sender: TCustomEasyListview;
+  DataObject: IDataObject; KeyState: TCommonKeyStates; WindowPt: TPoint;
+  AvailableEffects: TCommonDropEffects; var DesiredDropEffect: TCommonDropEffect;
+  var Handled: Boolean);
+var
+  HDrop: TCommonHDrop;
+  I: Integer;
+begin
+  DesiredDropEffect := cdeNone;
+  if Succeeded(DataObject.QueryGetData(GetHDropFormat)) then
+    begin
+      HDrop := TCommonHDrop.Create;
+      try
+        if HDrop.LoadFromDataObject(DataObject) then
+          begin
+            for I := 0 to HDrop.FileCount - 1 do
+              begin
+                ActiveAlbum.Add(HDrop.FileName(I));
+                GlobalEventBus.Post(TEventFactory.NewNewAlbumItemEvent(ActiveAlbum, HDrop.FileName(I)));
+              end;
+            DesiredDropEffect := cdeCopy;
+          end;
+      finally
+        HDrop.Free;
+      end;
+    end;
+end;
+
+procedure TwAlbums.velFotosOLEDragEnter(Sender: TCustomEasyListview;
+  DataObject: IDataObject; KeyState: TCommonKeyStates; WindowPt: TPoint;
+  AvailableEffects: TCommonDropEffects;
+  var DesiredDropEffect: TCommonDropEffect);
+begin
+  DesiredDropEffect := cdeNone;
 end;
 
 end.

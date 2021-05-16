@@ -7,7 +7,7 @@ uses
   Vcl.BaseImageCollection, Vcl.ImageCollection,
   EventBus,
   Qodelib.Themes,
-  Qam.Database, Qam.Events;
+  Qam.Events;
 
 type
   TdmCommon = class(TDataModule)
@@ -16,12 +16,10 @@ type
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
   private
-    FDatabase: IQamTrailsDatabase;
     procedure ThemeChangeEvent(Sender: TObject);
     procedure ThemeChanged;
     procedure LoadDatabase;
   public
-    property Database: IQamTrailsDatabase read FDatabase;
     procedure MainFormCreated;
     function GetImageCollection: TImageCollection;
     [Subscribe]
@@ -34,8 +32,8 @@ var
 implementation
 
 uses
-  Spring.Container,
-  Qam.Settings, Qam.Storage;
+  Spring, Spring.Collections, Spring.Container,
+  Qam.Settings, Qam.Storage, Qam.PhotoAlbums;
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
@@ -50,9 +48,13 @@ begin
 end;
 
 procedure TdmCommon.DataModuleDestroy(Sender: TObject);
+var
+  Albums: IPhotoAlbumCollection;
 begin
-  Database.Close;
   ApplicationSettings.SaveSettings;
+
+  Albums := GlobalContainer.Resolve<IPhotoAlbumCollection>;
+  Albums.SaveAlbumList;
 end;
 
 function TdmCommon.GetImageCollection: TImageCollection;
@@ -64,14 +66,8 @@ begin
 end;
 
 procedure TdmCommon.LoadDatabase;
-var
-  DatabaseFilename: String;
 begin
-  DatabaseFilename := TPath.Combine(ApplicationSettings.DataFoldername, 'QamTrails.db');
-  FDatabase := GlobalContainer.Resolve<IQamTrailsDatabase>;
   TDataStorage.Initialize;
-  Database.Load(DatabaseFilename);
-  GlobalEventBus.Post(TEventFactory.NewDatabaseLoadEvent(Database));
 end;
 
 procedure TdmCommon.MainFormCreated;
@@ -80,10 +76,15 @@ begin
 end;
 
 procedure TdmCommon.OnSettingChange(AEvent: ISettingChangeEvent);
+var
+  Albums: IPhotoAlbumCollection;
 begin
   case AEvent.Value of
     svMainCollectionFolder:
-      LoadDatabase;
+      begin
+        Albums := GlobalContainer.Resolve<IPhotoAlbumCollection>;
+        Albums.LoadAlbumList;
+      end;
   end;
 end;
 

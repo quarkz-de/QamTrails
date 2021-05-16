@@ -18,7 +18,7 @@ object wPhotoCollection: TwPhotoCollection
   object Splitter1: TSplitter
     Left = 200
     Top = 29
-    Height = 406
+    Height = 425
     ExplicitLeft = 392
     ExplicitTop = 176
     ExplicitHeight = 100
@@ -27,7 +27,7 @@ object wPhotoCollection: TwPhotoCollection
     Left = 0
     Top = 29
     Width = 200
-    Height = 406
+    Height = 425
     Active = False
     Align = alLeft
     BorderStyle = bsNone
@@ -62,7 +62,7 @@ object wPhotoCollection: TwPhotoCollection
     Left = 203
     Top = 29
     Width = 583
-    Height = 406
+    Height = 425
     Align = alClient
     BevelOuter = bvNone
     Caption = 'pnContent'
@@ -72,7 +72,7 @@ object wPhotoCollection: TwPhotoCollection
       Left = 0
       Top = 0
       Width = 583
-      Height = 133
+      Height = 152
       Align = alClient
       BorderStyle = bsNone
       CompressedFile.Color = clRed
@@ -93,6 +93,8 @@ object wPhotoCollection: TwPhotoCollection
       EncryptedFile.Font.Height = -11
       EncryptedFile.Font.Name = 'Tahoma'
       EncryptedFile.Font.Style = []
+      DragManager.DragMode = dmAutomatic
+      DragManager.Enabled = True
       ExplorerTreeview = vetFolders
       FileObjects = [foNonFolders]
       FileSizeFormat = vfsfDefault
@@ -109,10 +111,11 @@ object wPhotoCollection: TwPhotoCollection
       View = elsThumbnail
       OnEnumFolder = velFotosEnumFolder
       OnItemSelectionChanged = velFotosItemSelectionChanged
+      OnOLEDragStart = velFotosOLEDragStart
     end
     object pnPreview: TPanel
       Left = 0
-      Top = 133
+      Top = 152
       Width = 583
       Height = 273
       Align = alBottom
@@ -157,32 +160,20 @@ object wPhotoCollection: TwPhotoCollection
       Caption = 'tbDivider1'
       Style = tbsSeparator
     end
-    object tbActiveAlbum: TToolButton
+    object cbAlbums: TComboBox
       Left = 101
-      Top = 0
-      Action = acActiveAlbum
-      Style = tbsDropDown
+      Top = 4
+      Width = 145
+      Height = 21
+      Style = csDropDownList
+      TabOrder = 0
+      OnChange = cbAlbumsChange
     end
-    object ToolButton1: TToolButton
-      Left = 147
+    object tbAddToActiveAlbum: TToolButton
+      Left = 246
       Top = 0
       Action = acAddToActiveAlbum
     end
-  end
-  object sbStatus: TStatusBar
-    Left = 0
-    Top = 435
-    Width = 786
-    Height = 19
-    Panels = <
-      item
-        Text = 'Album'
-        Width = 50
-      end
-      item
-        Width = 200
-      end>
-    SizeGrip = False
   end
   object vilIcons: TVirtualImageList
     AutoFill = True
@@ -286,13 +277,6 @@ object wPhotoCollection: TwPhotoCollection
       ImageIndex = 6
       ImageName = '006_List'
       OnExecute = acViewDetailsExecute
-    end
-    object acActiveAlbum: TAction
-      Caption = 'acActiveAlbum'
-      Hint = 'Aktives Album ausw'#228'hlen'
-      ImageIndex = 3
-      ImageName = '003_Gallery'
-      OnExecute = acActiveAlbumExecute
     end
     object acAddToActiveAlbum: TAction
       Caption = 'acAddToActiveAlbum'

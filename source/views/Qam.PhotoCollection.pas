@@ -6,13 +6,14 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.IOUtils,
   System.ImageList, System.Actions,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls,
-  Vcl.ComCtrls, Vcl.ToolWin, Vcl.Buttons, Vcl.ImgList,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
+  Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Buttons, Vcl.ImgList,
   Vcl.VirtualImageList, Vcl.ActnList,
   Eventbus,
   VirtualTrees, VirtualExplorerEasyListview, VirtualExplorerTree,
-  MPCommonObjects, MPShellUtilities, EasyListview,
-  Qam.Forms, Qam.Events, Qam.PhotoViewer, Qam.Types, Qam.PhotoAlbum;
+  MPCommonObjects, MPShellUtilities, EasyListview, MPCommonUtilities,
+  Qam.Forms, Qam.Events, Qam.PhotoViewer, Qam.Types, Qam.PhotoAlbums,
+  Winapi.ActiveX;
 
 type
   TwPhotoCollection = class(TApplicationForm)
@@ -31,21 +32,22 @@ type
     tbViewPreview: TToolButton;
     tbViewDetails: TToolButton;
     tbDivider1: TToolButton;
-    tbActiveAlbum: TToolButton;
-    acActiveAlbum: TAction;
     acAddToActiveAlbum: TAction;
-    ToolButton1: TToolButton;
-    sbStatus: TStatusBar;
-    procedure acActiveAlbumExecute(Sender: TObject);
+    tbAddToActiveAlbum: TToolButton;
+    cbAlbums: TComboBox;
     procedure acAddToActiveAlbumExecute(Sender: TObject);
     procedure acViewDetailsExecute(Sender: TObject);
     procedure acViewPreviewExecute(Sender: TObject);
     procedure acViewThumbnailsExecute(Sender: TObject);
+    procedure cbAlbumsChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure velFotosEnumFolder(Sender: TCustomVirtualExplorerEasyListview;
       Namespace: TNamespace; var AllowAsChild: Boolean);
     procedure velFotosItemSelectionChanged(Sender: TCustomEasyListview; Item:
         TEasyItem);
+    procedure velFotosOLEDragStart(Sender: TCustomEasyListview; ADataObject:
+        IDataObject; var AvailableEffects: TCommonDropEffects; var AllowDrag:
+        Boolean);
     procedure velFotosRebuiltShellHeader(Sender:
         TCustomVirtualExplorerEasyListview);
     procedure vetFoldersChange(Sender: TBaseVirtualTree; Node: PVirtualNode);
@@ -58,6 +60,8 @@ type
     procedure SetRootFolder;
     procedure SetActiveAlbum(const Value: TPhotoAlbum);
     procedure UpdatePreview;
+    procedure UpdateAlbumList;
+    procedure ChangeActiveAlbum;
   protected
     property ActiveAlbum: TPhotoAlbum read FActiveAlbum write SetActiveAlbum;
   public
@@ -75,22 +79,21 @@ var
 implementation
 
 uses
+  Spring.Container,
   Qodelib.DropdownForm,
-  Qam.Settings, Qam.Storage, Qam.DataModule, Qam.AlbumSelector;
+  Qam.Settings, Qam.Storage, Qam.DataModule;
 
 {$R *.dfm}
 
 { TwPhotoCollection }
 
-procedure TwPhotoCollection.acActiveAlbumExecute(Sender: TObject);
-begin
-  TDropDownFormController.DropDown(TwAlbumSelector, tbActiveAlbum);
-end;
-
 procedure TwPhotoCollection.acAddToActiveAlbumExecute(Sender: TObject);
 begin
   if Assigned(ActiveAlbum) then
-    TPhotoAlbumItemHelper.AddItem(ActiveAlbum, velFotos.SelectedPath)
+    begin
+      ActiveAlbum.Add(velFotos.SelectedPath);
+      GlobalEventBus.Post(TEventFactory.NewNewAlbumItemEvent(ActiveAlbum, velFotos.SelectedPath));
+    end
   else
     ShowMessage('Kein Album ausgewählt.');
 end;
@@ -108,6 +111,20 @@ end;
 procedure TwPhotoCollection.acViewThumbnailsExecute(Sender: TObject);
 begin
   ApplicationSettings.PhotoCollectionFolderStyle := cfsGrid;
+end;
+
+procedure TwPhotoCollection.cbAlbumsChange(Sender: TObject);
+begin
+  ChangeActiveAlbum;
+end;
+
+procedure TwPhotoCollection.ChangeActiveAlbum;
+var
+  Albums: IPhotoAlbumCollection;
+begin
+  Albums := GlobalContainer.Resolve<IPhotoAlbumCollection>;
+  if cbAlbums.ItemIndex > -1 then
+    SetActiveAlbum(Albums.Albums[cbAlbums.ItemIndex]);
 end;
 
 procedure TwPhotoCollection.FormCreate(Sender: TObject);
@@ -150,7 +167,6 @@ end;
 procedure TwPhotoCollection.SetActiveAlbum(const Value: TPhotoAlbum);
 begin
   FActiveAlbum := Value;
-  sbStatus.Panels[1].Text := FActiveAlbum.Name;
 end;
 
 procedure TwPhotoCollection.SetFolderStyle;
@@ -212,6 +228,27 @@ begin
 
   if TDirectory.Exists(ActiveFolder) then
     vetFolders.BrowseTo(ActiveFolder);
+
+  UpdateAlbumList;
+end;
+
+procedure TwPhotoCollection.UpdateAlbumList;
+var
+  Albums: IPhotoAlbumCollection;
+  Album: TPhotoAlbum;
+begin
+  Albums := GlobalContainer.Resolve<IPhotoAlbumCollection>;
+
+  cbAlbums.Items.BeginUpdate;
+  cbAlbums.Items.Clear;
+  for Album in Albums.Albums do
+    cbAlbums.Items.Add(Album.Name);
+  cbAlbums.Items.EndUpdate;
+
+  if cbAlbums.Items.Count > 0 then
+    cbAlbums.ItemIndex := 0;
+
+  ChangeActiveAlbum;
 end;
 
 procedure TwPhotoCollection.UpdatePreview;
@@ -248,6 +285,13 @@ procedure TwPhotoCollection.velFotosItemSelectionChanged(Sender:
   TCustomEasyListview; Item: TEasyItem);
 begin
   UpdatePreview;
+end;
+
+procedure TwPhotoCollection.velFotosOLEDragStart(Sender: TCustomEasyListview;
+  ADataObject: IDataObject; var AvailableEffects: TCommonDropEffects;
+  var AllowDrag: Boolean);
+begin
+  AvailableEffects := [cdeCopy];
 end;
 
 procedure TwPhotoCollection.velFotosRebuiltShellHeader(

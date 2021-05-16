@@ -3,7 +3,7 @@ unit Qam.Events;
 interface
 
 uses
-  Qam.Settings, Qam.Database, Qam.PhotoAlbum;
+  Qam.Settings, Qam.PhotoAlbums;
 
 type
   IThemeChangeEvent = interface
@@ -22,12 +22,6 @@ type
     property Value: TApplicationSettingValue read GetValue;
   end;
 
-  IDatabaseLoadEvent = interface
-    ['{809E5E24-788C-45E4-A094-F6DA49455487}']
-    function GetDatabase: IQamTrailsDatabase;
-    property Database: IQamTrailsDatabase read GetDatabase;
-  end;
-
   IActiveAlbumChangeEvent = interface
     ['{893EB4AD-D972-4E91-B480-A6E44965F1A8}']
     function GetAlbum: TPhotoAlbum;
@@ -40,18 +34,26 @@ type
     property Album: TPhotoAlbum read GetAlbum;
   end;
 
+  INewAlbumItemEvent = interface
+    ['{84B76126-37EA-4E51-AF42-860813567E8C}']
+    function GetAlbum: TPhotoAlbum;
+    function GetFilename: String;
+    property Album: TPhotoAlbum read GetAlbum;
+    property Filename: String read GetFilename;
+  end;
+
   TEventFactory = class
   public
     class function NewSettingChangeEvent(
       const AValue: TApplicationSettingValue): ISettingChangeEvent;
     class function NewThemeChangeEvent(
       const AThemeName: String; const AIsDark: Boolean): IThemeChangeEvent;
-    class function NewDatabaseLoadEvent(
-      const ADatabase: IQamTrailsDatabase): IDatabaseLoadEvent;
     class function NewActiveAlbumChangeEvent(
       const AAlbum: TPhotoAlbum): IActiveAlbumChangeEvent;
     class function NewNewAlbumEvent(
       const AAlbum: TPhotoAlbum): INewAlbumEvent;
+    class function NewNewAlbumItemEvent(const AAlbum: TPhotoAlbum;
+      const AFilename: String): INewAlbumItemEvent;
   end;
 
 implementation
@@ -82,16 +84,6 @@ type
     property Value: TApplicationSettingValue read GetValue;
   end;
 
-  TDatabaseLoadEvent = class(TInterfacedObject, IDatabaseLoadEvent)
-  private
-    FDatabase: IQamTrailsDatabase;
-  protected
-    function GetDatabase: IQamTrailsDatabase;
-  public
-    constructor Create(const ADatabase: IQamTrailsDatabase);
-    property Database: IQamTrailsDatabase read GetDatabase;
-  end;
-
   TActiveAlbumChangeEvent = class(TInterfacedObject, IActiveAlbumChangeEvent)
   private
     FAlbum: TPhotoAlbum;
@@ -112,6 +104,19 @@ type
     property Album: TPhotoAlbum read GetAlbum;
   end;
 
+  TNewAlbumItemEvent = class(TInterfacedObject, INewAlbumItemEvent)
+  private
+    FAlbum: TPhotoAlbum;
+    FFilename: String;
+  protected
+    function GetAlbum: TPhotoAlbum;
+    function GetFilename: String;
+  public
+    constructor Create(const AAlbum: TPhotoAlbum; const AFilename: String);
+    property Album: TPhotoAlbum read GetAlbum;
+    property Filename: String read GetFilename;
+  end;
+
 { TEventFactory }
 
 class function TEventFactory.NewActiveAlbumChangeEvent(
@@ -120,16 +125,16 @@ begin
   Result := TActiveAlbumChangeEvent.Create(AAlbum);
 end;
 
-class function TEventFactory.NewDatabaseLoadEvent(
-  const ADatabase: IQamTrailsDatabase): IDatabaseLoadEvent;
-begin
-  Result := TDatabaseLoadEvent.Create(ADatabase);
-end;
-
 class function TEventFactory.NewNewAlbumEvent(
   const AAlbum: TPhotoAlbum): INewAlbumEvent;
 begin
   Result := TNewAlbumEvent.Create(AAlbum);
+end;
+
+class function TEventFactory.NewNewAlbumItemEvent(const AAlbum: TPhotoAlbum;
+  const AFilename: String): INewAlbumItemEvent;
+begin
+  Result := TNewAlbumItemEvent.Create(AAlbum, AFilename);
 end;
 
 class function TEventFactory.NewSettingChangeEvent(
@@ -182,19 +187,6 @@ begin
   Result := FValue;
 end;
 
-{ TDatabaseLoadEvent }
-
-constructor TDatabaseLoadEvent.Create(const ADatabase: IQamTrailsDatabase);
-begin
-  inherited Create;
-  FDatabase := ADatabase;
-end;
-
-function TDatabaseLoadEvent.GetDatabase: IQamTrailsDatabase;
-begin
-  Result := FDatabase;
-end;
-
 { TActiveAlbumChangeEvent }
 
 constructor TActiveAlbumChangeEvent.Create(const AAlbum: TPhotoAlbum);
@@ -219,6 +211,26 @@ end;
 function TNewAlbumEvent.GetAlbum: TPhotoAlbum;
 begin
   Result := FAlbum;
+end;
+
+{ TNewAlbumItemEvent }
+
+constructor TNewAlbumItemEvent.Create(const AAlbum: TPhotoAlbum;
+  const AFilename: String);
+begin
+  inherited Create;
+  FAlbum := AAlbum;
+  FFilename := AFilename;
+end;
+
+function TNewAlbumItemEvent.GetAlbum: TPhotoAlbum;
+begin
+  Result := FAlbum;
+end;
+
+function TNewAlbumItemEvent.GetFilename: String;
+begin
+  Result := FFilename;
 end;
 
 end.

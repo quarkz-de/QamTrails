@@ -13,7 +13,6 @@ object wAlbums: TwAlbums
   Font.Style = []
   OldCreateOrder = False
   OnCreate = FormCreate
-  OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 13
   object spSplitter: TSplitter
@@ -23,55 +22,6 @@ object wAlbums: TwAlbums
     ExplicitLeft = 324
     ExplicitTop = 120
     ExplicitHeight = 100
-  end
-  object clFotos: TControlList
-    Left = 208
-    Top = 29
-    Width = 443
-    Height = 309
-    Align = alClient
-    BorderStyle = bsNone
-    ItemWidth = 300
-    ItemMargins.Left = 0
-    ItemMargins.Top = 0
-    ItemMargins.Right = 0
-    ItemMargins.Bottom = 0
-    ColumnLayout = cltMultiTopToBottom
-    ParentColor = False
-    TabOrder = 0
-    OnBeforeDrawItem = clFotosBeforeDrawItem
-    OnShowControl = clFotosShowControl
-    object txFilename: TLabel
-      Left = 108
-      Top = 4
-      Width = 52
-      Height = 13
-      Caption = 'txFilename'
-    end
-    object btEdit: TControlListButton
-      Left = 228
-      Top = 32
-      Width = 34
-      Height = 33
-      Anchors = [akRight, akBottom]
-      Images = vilIcons
-      ImageIndex = 9
-      ImageName = '009_Edit'
-      LinkHotColor = clHighlight
-      Style = clbkToolButton
-    end
-    object btDelete: TControlListButton
-      Left = 263
-      Top = 32
-      Width = 34
-      Height = 33
-      Anchors = [akRight, akBottom]
-      Images = vilIcons
-      ImageIndex = 8
-      ImageName = '008_Delete'
-      LinkHotColor = clHighlight
-      Style = clbkToolButton
-    end
   end
   object stAlbums: TVirtualStringTree
     Left = 0
@@ -85,7 +35,7 @@ object wAlbums: TwAlbums
     DragType = dtVCL
     Header.AutoSizeIndex = 0
     Header.MainColumn = -1
-    TabOrder = 1
+    TabOrder = 0
     TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages]
     TreeOptions.SelectionOptions = [toRightClickSelect]
     OnFocusChanged = stAlbumsFocusChanged
@@ -97,12 +47,54 @@ object wAlbums: TwAlbums
     Width = 651
     Height = 29
     Caption = 'ToolBar1'
-    TabOrder = 2
+    TabOrder = 1
     object ToolButton1: TToolButton
       Left = 0
       Top = 0
       Action = acNewAlbum
     end
+  end
+  object velFotos: TVirtualMultiPathExplorerEasyListview
+    Left = 208
+    Top = 29
+    Width = 443
+    Height = 309
+    Align = alClient
+    BorderStyle = bsNone
+    CompressedFile.Color = clRed
+    CompressedFile.Font.Charset = DEFAULT_CHARSET
+    CompressedFile.Font.Color = clWindowText
+    CompressedFile.Font.Height = -11
+    CompressedFile.Font.Name = 'Tahoma'
+    CompressedFile.Font.Style = []
+    DefaultSortColumn = 0
+    EditManager.Font.Charset = DEFAULT_CHARSET
+    EditManager.Font.Color = clWindowText
+    EditManager.Font.Height = -11
+    EditManager.Font.Name = 'Tahoma'
+    EditManager.Font.Style = []
+    EncryptedFile.Color = 32832
+    EncryptedFile.Font.Charset = DEFAULT_CHARSET
+    EncryptedFile.Font.Color = clWindowText
+    EncryptedFile.Font.Height = -11
+    EncryptedFile.Font.Name = 'Tahoma'
+    EncryptedFile.Font.Style = []
+    FileSizeFormat = vfsfDefault
+    DragManager.DragMode = dmAutomatic
+    DragManager.Enabled = True
+    Grouped = False
+    GroupingColumn = 0
+    PaintInfoGroup.MarginBottom.CaptionIndent = 4
+    PaintInfoGroup.MarginTop.Visible = False
+    Sort.Algorithm = esaQuickSort
+    Sort.AutoSort = True
+    TabOrder = 2
+    ThumbsManager.StorageFilename = 'Thumbnails.album'
+    ThumbsManager.UseExifOrientation = False
+    View = elsThumbnail
+    OnKeyAction = velFotosKeyAction
+    OnOLEDragEnter = velFotosOLEDragEnter
+    OnOLEDragDrop = velFotosOLEDragDrop
   end
   object vilIcons: TVirtualImageList
     AutoFill = True
