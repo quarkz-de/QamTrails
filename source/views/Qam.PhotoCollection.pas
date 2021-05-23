@@ -40,6 +40,8 @@ type
     procedure acViewThumbnailsExecute(Sender: TObject);
     procedure cbAlbumsChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure velFotosCustomGroup(Sender: TCustomVirtualExplorerEasyListview;
+        Groups: TEasyGroups; NS: TNamespace; var Group: TExplorerGroup);
     procedure velFotosEnumFolder(Sender: TCustomVirtualExplorerEasyListview;
       Namespace: TNamespace; var AllowAsChild: Boolean);
     procedure velFotosItemSelectionChanged(Sender: TCustomEasyListview;
@@ -53,16 +55,19 @@ type
       Namespace: TNamespace; var AllowAsChild: Boolean);
   private
     FViewer: TfrPhotoViewer;
-    FActiveAlbum: TPhotoAlbum;
     procedure SetFolderStyle;
     procedure SetRootFolder;
     procedure SetActiveAlbum(const Value: TPhotoAlbum);
+    function GetActiveAlbum: TPhotoAlbum;
     procedure UpdatePreview;
     procedure UpdateAlbumList;
     procedure ChangeActiveAlbum;
+    procedure SelectAlbum(const AIndex: Integer); overload;
+    procedure SelectAlbum(const AAlbum: TPhotoAlbum); overload;
   protected
-    property ActiveAlbum: TPhotoAlbum read FActiveAlbum write SetActiveAlbum;
+    property ActiveAlbum: TPhotoAlbum read GetActiveAlbum write SetActiveAlbum;
   public
+    procedure InitializeForm; override;
     [Subscribe]
     procedure OnThemeChange(AEvent: IThemeChangeEvent);
     [Subscribe]
@@ -153,6 +158,20 @@ begin
   SetFolderStyle;
 end;
 
+function TwPhotoCollection.GetActiveAlbum: TPhotoAlbum;
+begin
+  if cbAlbums.ItemIndex < 0 then
+    Result := nil
+  else
+    Result := TPhotoAlbum(cbAlbums.Items.Objects[cbAlbums.ItemIndex]);
+end;
+
+procedure TwPhotoCollection.InitializeForm;
+begin
+  inherited;
+  velFotos.Font.Size := velFotos.Font.Size - 2;
+end;
+
 procedure TwPhotoCollection.OnActiveAlbumChange(
   AEvent: IActiveAlbumChangeEvent);
 begin
@@ -185,8 +204,13 @@ begin
 end;
 
 procedure TwPhotoCollection.OnNewAlbum(AEvent: INewAlbumEvent);
+var
+  Album: TPhotoAlbum;
 begin
-
+  Album := ActiveAlbum;
+  UpdateAlbumList;
+  if Album <> nil then
+    SelectAlbum(Album);
 end;
 
 procedure TwPhotoCollection.OnSettingChange(AEvent: ISettingChangeEvent);
@@ -204,9 +228,25 @@ begin
   vilIcons.ImageCollection := dmCommon.GetImageCollection;
 end;
 
-procedure TwPhotoCollection.SetActiveAlbum(const Value: TPhotoAlbum);
+procedure TwPhotoCollection.SelectAlbum(const AAlbum: TPhotoAlbum);
 begin
-  FActiveAlbum := Value;
+  SelectAlbum(cbAlbums.Items.IndexOfObject(AAlbum));
+end;
+
+procedure TwPhotoCollection.SelectAlbum(const AIndex: Integer);
+begin
+  if cbAlbums.Items.Count > AIndex then
+    cbAlbums.ItemIndex := AIndex;
+  ChangeActiveAlbum;
+end;
+
+procedure TwPhotoCollection.SetActiveAlbum(const Value: TPhotoAlbum);
+var
+  Index: Integer;
+begin
+  Index := cbAlbums.Items.IndexOfObject(Value);
+  if Index > -1 then
+    cbAlbums.ItemIndex := Index;
 end;
 
 procedure TwPhotoCollection.SetFolderStyle;
@@ -220,6 +260,7 @@ begin
         velFotos.Align := alClient;
         pnPreview.Align := alNone;
         acViewThumbnails.Checked := true;
+        velFotos.Grouped := true;
       end;
     cfsPreview:
       begin
@@ -231,6 +272,7 @@ begin
         velFotos.Height := velFotos.CellSizes.FilmStrip.Height + 20;
         pnPreview.Align := alClient;
         acViewPreview.Checked := true;
+        velFotos.Grouped := false;
       end;
     cfsDetails:
       begin
@@ -240,10 +282,13 @@ begin
         velFotos.Align := alClient;
         pnPreview.Align := alNone;
         acViewDetails.Checked := true;
+        velFotos.Grouped := false;
       end;
   end;
 
   velFotos.Header.ShowInAllViews := velFotos.View = elsReportThumb;
+
+//  velFotos.Rebuild;
 
   if velFotos.Selection.FocusedItem <> nil then
     velFotos.Selection.FocusedItem.MakeVisible(emvAuto);
@@ -270,6 +315,7 @@ begin
     vetFolders.BrowseTo(ActiveFolder);
 
   UpdateAlbumList;
+  SelectAlbum(0);
 end;
 
 procedure TwPhotoCollection.UpdateAlbumList;
@@ -284,17 +330,35 @@ begin
   for Album in Albums.Albums do
     cbAlbums.Items.AddObject(Album.Name, Album);
   cbAlbums.Items.EndUpdate;
-
-  if cbAlbums.Items.Count > 0 then
-    cbAlbums.ItemIndex := 0;
-
-  ChangeActiveAlbum;
 end;
 
 procedure TwPhotoCollection.UpdatePreview;
 begin
   if ApplicationSettings.PhotoCollectionFolderStyle = cfsPreview then
     FViewer.LoadFromFile(velFotos.SelectedPath);
+end;
+
+procedure TwPhotoCollection.velFotosCustomGroup(Sender:
+    TCustomVirtualExplorerEasyListview; Groups: TEasyGroups; NS: TNamespace;
+    var Group: TExplorerGroup);
+var
+  I: Integer;
+begin
+  if velFotos.View = elsThumbnail then
+    begin
+      I := 0;
+      while not Assigned(Group) and (I < Groups.Count) do
+        begin
+          if Groups[I].Caption = DateToStr(NS.LastWriteDateTime) then
+            Group := TExplorerGroup(Groups[I]);
+          Inc(I);
+        end;
+      if not Assigned(Group) then
+        begin
+          Group := Groups.AddCustom(TExplorerGroup) as TExplorerGroup;
+          Group.Caption := DateToStr(NS.LastWriteDateTime);
+        end;
+    end;
 end;
 
 procedure TwPhotoCollection.velFotosEnumFolder(

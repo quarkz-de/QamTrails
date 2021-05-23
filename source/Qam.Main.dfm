@@ -23,7 +23,7 @@ object wMain: TwMain
   CustomTitleBar.ButtonInactiveBackgroundColor = clWhite
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
-  Font.Height = -13
+  Font.Height = -15
   Font.Name = 'Segoe UI'
   Font.Style = []
   GlassFrame.Enabled = True
@@ -34,12 +34,14 @@ object wMain: TwMain
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
-  TextHeight = 17
+  TextHeight = 20
   object svSplitView: TSplitView
     Left = 0
     Top = 30
     Width = 170
     Height = 570
+    BevelEdges = [beRight]
+    BevelKind = bkTile
     CloseStyle = svcCompact
     CompactWidth = 42
     OpenedWidth = 170
@@ -50,11 +52,12 @@ object wMain: TwMain
     object pnHeader: TPanel
       Left = 0
       Top = 0
-      Width = 170
+      Width = 168
       Height = 45
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 0
+      ExplicitWidth = 170
       object imBurgerButton: TVirtualImage
         Left = 6
         Top = 6
@@ -67,37 +70,31 @@ object wMain: TwMain
       end
       object txHeaderText: TLabel
         Left = 52
-        Top = 12
-        Width = 70
-        Height = 21
+        Top = 6
+        Width = 91
+        Height = 30
         Caption = 'QamTrails'
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -16
+        Font.Height = -21
         Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
-      end
-      object txVersion: TLabel
-        Left = 136
-        Top = 16
-        Width = 17
-        Height = 17
-        Caption = '1.0'
       end
     end
     object pnNavigation: TPanel
       Left = 0
       Top = 45
-      Width = 170
+      Width = 168
       Height = 525
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
+      ExplicitWidth = 170
       object sbStart: TSpeedButton
         Left = 0
         Top = 0
-        Width = 170
+        Width = 168
         Height = 38
         Action = acSectionWelcome
         Align = alTop
@@ -111,7 +108,7 @@ object wMain: TwMain
       object sbSettings: TSpeedButton
         Left = 0
         Top = 487
-        Width = 170
+        Width = 168
         Height = 38
         Action = acSectionSettings
         Align = alBottom
@@ -125,7 +122,7 @@ object wMain: TwMain
       object SpeedButton1: TSpeedButton
         Left = 0
         Top = 38
-        Width = 170
+        Width = 168
         Height = 38
         Action = acSectionPhotoCollection
         Align = alTop
@@ -134,11 +131,12 @@ object wMain: TwMain
         Flat = True
         Margin = 6
         ExplicitTop = 64
+        ExplicitWidth = 170
       end
       object sbAlben: TSpeedButton
         Left = 0
         Top = 76
-        Width = 170
+        Width = 168
         Height = 38
         Action = acSectionPhotoAlbums
         Align = alTop
@@ -147,6 +145,7 @@ object wMain: TwMain
         Flat = True
         Margin = 6
         ExplicitTop = 120
+        ExplicitWidth = 170
       end
     end
   end

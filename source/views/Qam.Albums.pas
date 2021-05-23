@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, Winapi.ShlObj, Winapi.ActiveX,
   System.SysUtils, System.Variants, System.Classes, System.ImageList,
-  System.Actions, System.Math,
+  System.Actions, System.Math, System.UITypes,
   Generics.Collections,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   Vcl.ExtCtrls, Vcl.ControlList, Vcl.ToolWin, Vcl.ComCtrls, Vcl.ImgList,
@@ -53,6 +53,7 @@ type
     function GetHDropFormat: TFormatEtc;
     procedure UpdateAvailableActions;
   public
+    procedure InitializeForm; override;
     property ActiveAlbum: TPhotoAlbum read GetActiveAlbum;
     [Subscribe]
     procedure OnThemeChange(AEvent: IThemeChangeEvent);
@@ -76,8 +77,22 @@ uses
   Qam.DataModule, Qam.Settings;
 
 procedure TwAlbums.acDeleteAlbumExecute(Sender: TObject);
+var
+  Album: TPhotoAlbum;
+  CanDelete: Boolean;
 begin
-  FAlbumVisualizer.DeleteSelectedAlbum;
+  Album := FAlbumVisualizer.GetSelectedAlbum;
+  if Assigned(Album) then
+    begin
+      if Album.Filenames.Count > 0 then
+        CanDelete := MessageDlg('Wollen Sie das Album wirklich löschen?',
+          mtConfirmation, [mbYes, mbNo], 0) = mrYes
+      else
+        CanDelete := true;
+
+      if CanDelete then
+        FAlbumVisualizer.DeleteSelectedAlbum;
+    end;
 end;
 
 procedure TwAlbums.acNewAlbumExecute(Sender: TObject);
@@ -132,6 +147,12 @@ begin
   Result.dwAspect := DVASPECT_CONTENT;
   Result.lindex := -1;
   Result.tymed := TYMED_HGLOBAL
+end;
+
+procedure TwAlbums.InitializeForm;
+begin
+  inherited;
+  velFotos.Font.Size := velFotos.Font.Size - 2;
 end;
 
 procedure TwAlbums.LoadAlbums;

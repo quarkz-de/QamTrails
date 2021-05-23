@@ -3,7 +3,7 @@ unit Qam.AlbumsVisualizer;
 interface
 
 uses
-  System.SysUtils, System.Classes,
+  System.SysUtils, System.Classes, System.IOUtils,
   Spring.Collections, Spring.Container,
   VirtualTrees,
   EventBus,
@@ -26,6 +26,9 @@ implementation
 
 uses
   Qam.Events;
+
+const
+  SDefaultAlbumName = 'unbenanntes Album';
 
 type
   TAlbumItem = record
@@ -50,6 +53,7 @@ type
     procedure CompareNodes(Sender: TBaseVirtualTree; Node1,
       Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
     function DoAddAlbum(const AAlbum: TPhotoAlbum): PVirtualNode;
+    function GetNodeOfAlbum(const AAlbum: TPhotoAlbum): PVirtualNode;
   public
     procedure SetVirtualTree(const ATree: TVirtualStringTree);
     procedure SetPhotoAlbums(const AList: IPhotoAlbumCollection);
@@ -114,29 +118,37 @@ function TPhotoAlbumTreeVisualizer.DoAddAlbum(
 var
   Data: PAlbumItem;
 begin
-  FTree.BeginUpdate;
+  if FAlbums.Albums.IndexOf(AAlbum) >= 0 then
+    begin
+      Result := GetNodeOfAlbum(AAlbum);
+    end
+  else
+    begin
+      FTree.BeginUpdate;
 
-  FAlbums.Albums.Add(AAlbum);
+      FAlbums.Albums.Add(AAlbum);
 
-  Result := FTree.AddChild(nil);
-  Data := FTree.GetNodeData(Result);
-  Data.Album := AAlbum;
+      Result := FTree.AddChild(nil);
+      Data := FTree.GetNodeData(Result);
+      Data.Album := AAlbum;
 
-  FTree.EndUpdate;
+      FTree.EndUpdate;
 
-  FTree.FocusedNode := Result;
-  FTree.Selected[Result] := true;
+      FTree.FocusedNode := Result;
+      FTree.Selected[Result] := true;
 
-  FAlbums.SortAlbumList;
+      FAlbums.SortAlbumList;
+    end;
 end;
 
 procedure TPhotoAlbumTreeVisualizer.Edited(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Column: TColumnIndex);
-//var
-//  Data: PAlbumItem;
+var
+  Data: PAlbumItem;
 begin
-//  Data := FTree.GetNodeData(Node);
-//  GlobalEventBus.Post(TEventFactory.NewPhotoAlbumEditEvent(Data.Album));
+  Data := FTree.GetNodeData(Node);
+  if not TFile.Exists(Data.Album.Filename) then
+    GlobalEventBus.Post(TEventFactory.NewNewAlbumEvent(Data.Album));
 end;
 
 procedure TPhotoAlbumTreeVisualizer.Editing(Sender: TBaseVirtualTree;
@@ -167,6 +179,24 @@ begin
   NodeDataSize := SizeOf(TAlbumItem);
 end;
 
+function TPhotoAlbumTreeVisualizer.GetNodeOfAlbum(
+  const AAlbum: TPhotoAlbum): PVirtualNode;
+var
+  Node: PVirtualNode;
+  Data: PAlbumItem;
+begin
+  Result := nil;
+  Node := FTree.GetFirstChild(nil);
+  while Assigned(Node) and not Assigned(Result) do
+    begin
+      Data := FTree.GetNodeData(Node);
+      if Data.Album = AAlbum then
+        Result := Node;
+
+      Node := Node.NextSibling;
+    end;
+end;
+
 function TPhotoAlbumTreeVisualizer.GetSelectedAlbum: TPhotoAlbum;
 begin
   Result := GetAlbum(FTree.FocusedNode);
@@ -187,7 +217,7 @@ var
   Node: PVirtualNode;
 begin
   Result := TPhotoAlbum.Create;
-  Result.Name := 'unbenanntes Album';
+  Result.Name := SDefaultAlbumName;
   Node := DoAddAlbum(Result);
   FTree.EditNode(Node, -1);
 end;
@@ -196,15 +226,10 @@ procedure TPhotoAlbumTreeVisualizer.NewText(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Column: TColumnIndex; NewText: string);
 var
   Data: PAlbumItem;
-  IsNew: Boolean;
 begin
   Data := FTree.GetNodeData(Node);
-  IsNew := Data.Album.Filename = '';
   Data.Album.Name := NewText;
   FAlbums.SortAlbumList;
-
-  if IsNew then
-    GlobalEventBus.Post(TEventFactory.NewNewAlbumEvent(Data.Album));
 end;
 
 procedure TPhotoAlbumTreeVisualizer.SetPhotoAlbums(
@@ -222,6 +247,7 @@ begin
   FTree.OnEdited := Edited;
   FTree.OnEditing := Editing;
   FTree.OnNewText := NewText;
+  FTree.OnEdited := Edited;
   FTree.OnCompareNodes := CompareNodes;
 end;
 

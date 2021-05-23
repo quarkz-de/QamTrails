@@ -29,8 +29,11 @@ type
     procedure SetFilenames(const AValue: TPhotoAlbumFilelist);
     procedure FilenamesChange(Sender: TObject);
   public
-    constructor Create;
+    constructor Create; overload;
+    constructor Create(const AFilename: String); overload;
     destructor Destroy; override;
+    procedure LoadFromFile;
+    procedure SaveToFile;
     [NeonIgnore]
     property Filename: String read GetFilename write FFilename;
     [NeonIgnore]
@@ -100,6 +103,12 @@ begin
   Modified := true;
 end;
 
+constructor TPhotoAlbum.Create(const AFilename: String);
+begin
+  Create;
+  FFilename := AFilename;
+end;
+
 destructor TPhotoAlbum.Destroy;
 begin
   FFilenames.Free;
@@ -114,8 +123,55 @@ end;
 function TPhotoAlbum.GetFilename: String;
 begin
   if FFilename = '' then
-    FFilename := TPath.Combine(ApplicationSettings.DataFoldername, TPhotoAlbumHelper.CreateUniqueFilename);
-  Result := FFilename;
+    Result := TPath.Combine(ApplicationSettings.DataFoldername, TPhotoAlbumHelper.CreateUniqueFilename)
+  else
+    Result := FFilename;
+end;
+
+procedure TPhotoAlbum.LoadFromFile;
+var
+  JSON: TJSONValue;
+  Strings: TStringList;
+begin
+  if FileExists(Filename) then
+    begin
+      Strings := TStringList.Create;
+      try
+        Strings.LoadFromFile(Filename);
+        try
+          JSON := TJSONObject.ParseJSONValue(Strings.Text);
+          try
+            TNeon.JSONToObject(self, JSON, TNeonConfiguration.Default);
+            Modified := false;
+          finally
+            JSON.Free;
+          end;
+        finally
+
+        end;
+      finally
+        Strings.Free;
+      end;
+    end;
+end;
+
+procedure TPhotoAlbum.SaveToFile;
+var
+  JSON: TJSONValue;
+  Stream: TFileStream;
+begin
+  JSON := TNeon.ObjectToJSON(self);
+  try
+    Stream := TFileStream.Create(Filename, fmCreate);
+    try
+      TNeon.PrintToStream(JSON, Stream, true);
+      Modified := false;
+    finally
+      Stream.Free;
+    end;
+  finally
+    JSON.Free;
+  end;
 end;
 
 procedure TPhotoAlbum.SetFilenames(const AValue: TPhotoAlbumFilelist);
@@ -168,27 +224,15 @@ var
   Album: TPhotoAlbum;
   Files: TStringDynArray;
   Filename: String;
-  JSON: TJSONValue;
-  Strings: TStringList;
 begin
   FList.Clear;
 
   Files := TDirectoryHelper.GetFiles(ApplicationSettings.DataFoldername, '*.qta');
   for Filename in Files do
     begin
-      Album := TPhotoAlbum.Create;
-      if FileExists(Filename) then
-        begin
-          Strings := TStringList.Create;
-          Strings.LoadFromFile(Filename);
-          JSON := TJSONObject.ParseJSONValue(Strings.Text);
-          TNeon.JSONToObject(Album, JSON, TNeonConfiguration.Default);
-          JSON.Free;
-          Strings.Free;
-        end;
-      Album.Filename := Filename;
+      Album := TPhotoAlbum.Create(Filename);
+      Album.LoadFromFile;
       Albums.Add(Album);
-      Album.Modified := false;
     end;
 
   if Albums.Count = 0 then
@@ -200,20 +244,10 @@ end;
 procedure TPhotoAlbumCollection.SaveAlbumList;
 var
   Album: TPhotoAlbum;
-var
-  JSON: TJSONValue;
-  Stream: TFileStream;
 begin
   for Album in Albums do
     if Album.Modified then
-      begin
-        JSON := TNeon.ObjectToJSON(Album);
-        Stream := TFileStream.Create(Album.Filename, fmCreate);
-        TNeon.PrintToStream(JSON, Stream, true);
-        Stream.Free;
-        JSON.Free;
-        Album.Modified := false;
-      end;
+      Album.SaveToFile;
 end;
 
 procedure TPhotoAlbumCollection.SortAlbumList;

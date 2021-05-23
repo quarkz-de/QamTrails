@@ -29,14 +29,14 @@ object wSettingsForm: TwSettingsForm
     Caption = 'Fotosammlung'
   end
   object txMainCollectionFolder: TLabel
-    Left = 124
+    Left = 140
     Top = 56
     Width = 108
     Height = 13
     Caption = 'txMainCollectionFolder'
   end
   object cbTheme: TComboBox
-    Left = 124
+    Left = 140
     Top = 21
     Width = 145
     Height = 21
@@ -45,7 +45,7 @@ object wSettingsForm: TwSettingsForm
     OnChange = cbThemeChange
   end
   object btSelectFolder: TButton
-    Left = 124
+    Left = 140
     Top = 83
     Width = 75
     Height = 25
@@ -57,7 +57,7 @@ object wSettingsForm: TwSettingsForm
     FavoriteLinks = <>
     FileTypes = <>
     Options = [fdoPickFolders]
-    Left = 204
+    Left = 220
     Top = 80
   end
 end

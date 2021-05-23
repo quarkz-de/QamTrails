@@ -21,7 +21,6 @@ type
     pnHeader: TPanel;
     imBurgerButton: TVirtualImage;
     txHeaderText: TLabel;
-    txVersion: TLabel;
     pnNavigation: TPanel;
     sbStart: TSpeedButton;
     sbSettings: TSpeedButton;

@@ -6,11 +6,7 @@ object wAlbums: TwAlbums
   ClientHeight = 338
   ClientWidth = 651
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'Tahoma'
-  Font.Style = []
+  ParentFont = True
   OldCreateOrder = False
   OnCreate = FormCreate
   PixelsPerInch = 96
@@ -30,14 +26,14 @@ object wAlbums: TwAlbums
     Height = 309
     Align = alLeft
     BorderStyle = bsNone
-    DefaultNodeHeight = 19
+    DefaultNodeHeight = 32
     DragOperations = [doMove]
     DragType = dtVCL
     Header.AutoSizeIndex = 0
     Header.MainColumn = -1
     TabOrder = 0
     TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages]
-    TreeOptions.SelectionOptions = [toRightClickSelect]
+    TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
     OnFocusChanged = stAlbumsFocusChanged
     Columns = <>
   end
@@ -49,6 +45,7 @@ object wAlbums: TwAlbums
     ButtonHeight = 30
     ButtonWidth = 31
     Caption = 'ToolBar1'
+    EdgeBorders = [ebBottom]
     Images = vilIcons
     TabOrder = 1
     object btNewAlbum: TToolButton
@@ -75,6 +72,7 @@ object wAlbums: TwAlbums
     CompressedFile.Font.Height = -11
     CompressedFile.Font.Name = 'Tahoma'
     CompressedFile.Font.Style = []
+    Ctl3D = True
     DefaultSortColumn = 0
     EditManager.Font.Charset = DEFAULT_CHARSET
     EditManager.Font.Color = clWindowText
@@ -94,6 +92,8 @@ object wAlbums: TwAlbums
     GroupingColumn = 0
     PaintInfoGroup.MarginBottom.CaptionIndent = 4
     PaintInfoGroup.MarginTop.Visible = False
+    ParentCtl3D = False
+    ShowThemedBorder = False
     Sort.Algorithm = esaQuickSort
     Sort.AutoSort = True
     Selection.MultiSelect = True

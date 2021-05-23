@@ -6,11 +6,7 @@ object wPhotoCollection: TwPhotoCollection
   ClientHeight = 454
   ClientWidth = 786
   Color = clBtnFace
-  Font.Charset = ANSI_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'Tahoma'
-  Font.Style = []
+  ParentFont = True
   OldCreateOrder = False
   OnCreate = FormCreate
   PixelsPerInch = 96
@@ -76,19 +72,19 @@ object wPhotoCollection: TwPhotoCollection
       Align = alClient
       BorderStyle = bsNone
       CompressedFile.Color = clRed
-      CompressedFile.Font.Charset = ANSI_CHARSET
+      CompressedFile.Font.Charset = DEFAULT_CHARSET
       CompressedFile.Font.Color = clWindowText
       CompressedFile.Font.Height = -11
       CompressedFile.Font.Name = 'Tahoma'
       CompressedFile.Font.Style = []
       DefaultSortColumn = 0
-      EditManager.Font.Charset = ANSI_CHARSET
+      EditManager.Font.Charset = DEFAULT_CHARSET
       EditManager.Font.Color = clWindowText
       EditManager.Font.Height = -11
       EditManager.Font.Name = 'Tahoma'
       EditManager.Font.Style = []
       EncryptedFile.Color = 32832
-      EncryptedFile.Font.Charset = ANSI_CHARSET
+      EncryptedFile.Font.Charset = DEFAULT_CHARSET
       EncryptedFile.Font.Color = clWindowText
       EncryptedFile.Font.Height = -11
       EncryptedFile.Font.Name = 'Tahoma'
@@ -98,11 +94,14 @@ object wPhotoCollection: TwPhotoCollection
       ExplorerTreeview = vetFolders
       FileObjects = [foNonFolders]
       FileSizeFormat = vfsfDefault
-      Grouped = False
+      Grouped = True
       GroupingColumn = 0
       OnRebuiltShellHeader = velFotosRebuiltShellHeader
+      Options = [eloBrowseExecuteFolder, eloBrowseExecuteFolderShortcut, eloBrowseExecuteZipFolder, eloExecuteOnDblClick, eloThreadedImages, eloThreadedDetails, eloShellContextMenus]
       PaintInfoGroup.MarginBottom.CaptionIndent = 4
       PaintInfoGroup.MarginTop.Visible = False
+      ShowGroupMargins = True
+      ShowThemedBorder = False
       Sort.Algorithm = esaQuickSort
       Sort.AutoSort = True
       Selection.MultiSelect = True
@@ -110,6 +109,7 @@ object wPhotoCollection: TwPhotoCollection
       ThumbsManager.StorageFilename = 'QamTrails.album'
       ThumbsManager.UseExifOrientation = False
       View = elsThumbnail
+      OnCustomGroup = velFotosCustomGroup
       OnEnumFolder = velFotosEnumFolder
       OnItemSelectionChanged = velFotosItemSelectionChanged
       OnOLEDragStart = velFotosOLEDragStart
@@ -134,6 +134,7 @@ object wPhotoCollection: TwPhotoCollection
     ButtonHeight = 30
     ButtonWidth = 31
     Caption = 'tbToolbar'
+    EdgeBorders = [ebBottom]
     Images = vilIcons
     TabOrder = 2
     object tbViewThumbnails: TToolButton
