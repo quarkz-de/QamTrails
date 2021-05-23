@@ -164,7 +164,7 @@ object wPhotoCollection: TwPhotoCollection
     end
     object cbAlbums: TComboBox
       Left = 101
-      Top = 0
+      Top = 4
       Width = 145
       Height = 21
       Align = alCustom
@@ -254,6 +254,12 @@ object wPhotoCollection: TwPhotoCollection
         CollectionName = '010_Add_To_Album'
         Disabled = False
         Name = '010_Add_To_Album'
+      end
+      item
+        CollectionIndex = 12
+        CollectionName = '011_Remove_From_Album'
+        Disabled = False
+        Name = '011_Remove_From_Album'
       end>
     ImageCollection = dmCommon.icDarkIcons
     Width = 24
@@ -263,7 +269,7 @@ object wPhotoCollection: TwPhotoCollection
   end
   object alActions: TActionList
     Images = vilIcons
-    Left = 60
+    Left = 72
     Top = 84
     object acViewThumbnails: TAction
       Checked = True
@@ -292,6 +298,7 @@ object wPhotoCollection: TwPhotoCollection
       Hint = 'Dem aktuellen Album hinzuf'#252'gen'
       ImageIndex = 11
       ImageName = '010_Add_To_Album'
+      ShortCut = 45
       OnExecute = acAddToActiveAlbumExecute
     end
   end

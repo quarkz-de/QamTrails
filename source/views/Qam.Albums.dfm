@@ -58,6 +58,18 @@ object wAlbums: TwAlbums
       Top = 0
       Action = acDeleteAlbum
     end
+    object ToolButton1: TToolButton
+      Left = 62
+      Top = 0
+      Width = 8
+      Caption = 'ToolButton1'
+      Style = tbsSeparator
+    end
+    object btRemoveItem: TToolButton
+      Left = 70
+      Top = 0
+      Action = acRemoveItem
+    end
   end
   object velFotos: TVirtualMultiPathExplorerEasyListview
     Left = 208
@@ -101,6 +113,7 @@ object wAlbums: TwAlbums
     ThumbsManager.StorageFilename = 'Thumbnails.album'
     ThumbsManager.UseExifOrientation = False
     View = elsThumbnail
+    OnItemSelectionChanged = velFotosItemSelectionChanged
     OnKeyAction = velFotosKeyAction
     OnOLEDragEnter = velFotosOLEDragEnter
     OnOLEDragDrop = velFotosOLEDragDrop
@@ -181,6 +194,12 @@ object wAlbums: TwAlbums
         CollectionName = '010_Add_To_Album'
         Disabled = False
         Name = '010_Add_To_Album'
+      end
+      item
+        CollectionIndex = 12
+        CollectionName = '011_Remove_From_Album'
+        Disabled = False
+        Name = '011_Remove_From_Album'
       end>
     ImageCollection = dmCommon.icDarkIcons
     Width = 24
@@ -202,6 +221,13 @@ object wAlbums: TwAlbums
       ImageIndex = 9
       ImageName = '008_Delete'
       OnExecute = acDeleteAlbumExecute
+    end
+    object acRemoveItem: TAction
+      Caption = 'acRemoveItem'
+      ImageIndex = 12
+      ImageName = '011_Remove_From_Album'
+      ShortCut = 46
+      OnExecute = acRemoveItemExecute
     end
   end
 end

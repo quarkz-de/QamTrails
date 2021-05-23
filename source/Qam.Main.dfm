@@ -254,6 +254,12 @@ object wMain: TwMain
         CollectionName = '010_Add_To_Album'
         Disabled = False
         Name = '010_Add_To_Album'
+      end
+      item
+        CollectionIndex = 12
+        CollectionName = '011_Remove_From_Album'
+        Disabled = False
+        Name = '011_Remove_From_Album'
       end>
     ImageCollection = dmCommon.icDarkIcons
     Width = 32
@@ -408,6 +414,12 @@ object wMain: TwMain
         CollectionName = '010_Add_To_Album'
         Disabled = False
         Name = '010_Add_To_Album'
+      end
+      item
+        CollectionIndex = 12
+        CollectionName = '011_Remove_From_Album'
+        Disabled = False
+        Name = '011_Remove_From_Album'
       end>
     ImageCollection = dmCommon.icDarkIcons
     Left = 476

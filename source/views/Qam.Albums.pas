@@ -29,11 +29,17 @@ type
     velFotos: TVirtualMultiPathExplorerEasyListview;
     acDeleteAlbum: TAction;
     btDeleteAlbum: TToolButton;
+    acRemoveItem: TAction;
+    btRemoveItem: TToolButton;
+    ToolButton1: TToolButton;
     procedure acDeleteAlbumExecute(Sender: TObject);
     procedure acNewAlbumExecute(Sender: TObject);
+    procedure acRemoveItemExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure stAlbumsFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex);
+    procedure velFotosItemSelectionChanged(Sender: TCustomEasyListview; Item:
+        TEasyItem);
     procedure velFotosKeyAction(Sender: TCustomEasyListview; var CharCode: Word;
       var Shift: TShiftState; var DoDefault: Boolean);
     procedure velFotosOLEDragDrop(Sender: TCustomEasyListview;
@@ -98,6 +104,30 @@ end;
 procedure TwAlbums.acNewAlbumExecute(Sender: TObject);
 begin
   FAlbumVisualizer.NewAlbum;
+end;
+
+procedure TwAlbums.acRemoveItemExecute(Sender: TObject);
+var
+  I: Integer;
+  FilesToDelete: TStringList;
+begin
+  FilesToDelete := TStringList.Create;
+  FilesToDelete.Assign(velFotos.SelectedPaths);
+
+  if FilesToDelete.Count > 0 then
+    begin
+      velFotos.BeginUpdate;
+      for I := 0 to FilesToDelete.Count - 1 do
+        begin
+          ActiveAlbum.Filenames.Delete(ActiveAlbum.Filenames.IndexOf(FilesToDelete[I]));
+          velFotos.Items.Delete(velFotos.Items.IndexOf(velFotos.FindItemByPath(FilesToDelete[I])));
+        end;
+
+      ActiveAlbum.Modified := true;
+      velFotos.EndUpdate;
+    end;
+
+  FilesToDelete.Free;
 end;
 
 procedure TwAlbums.AlbumChanged;
@@ -212,6 +242,13 @@ var
 begin
   HasActiveAlbum := GetActiveAlbum <> nil;
   acDeleteAlbum.Enabled := HasActiveAlbum;
+  acRemoveItem.Enabled := HasActiveAlbum and (velFotos.SelectedPaths.Count > 0);
+end;
+
+procedure TwAlbums.velFotosItemSelectionChanged(Sender: TCustomEasyListview;
+    Item: TEasyItem);
+begin
+  UpdateAvailableActions;
 end;
 
 procedure TwAlbums.velFotosKeyAction(Sender: TCustomEasyListview;
@@ -220,8 +257,6 @@ begin
   case CharCode of
     VK_DELETE:
       begin
-        // todo:
-        // velFotos.SelectedPaths aus dem Album entfernen
         DoDefault := false;
       end;
   end;
