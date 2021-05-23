@@ -88,6 +88,7 @@ begin
   Node := FTree.FocusedNode;
   if Node <> nil then
     begin
+      FTree.BeginUpdate;
       NextNode := Node.PrevSibling;
       if NextNode = nil then
         NextNode := Node.NextSibling;
@@ -95,9 +96,8 @@ begin
         NextNode := Node.Parent;
 
       Data := FTree.GetNodeData(Node);
-
-      // todo: Albumlist aktualisieren, Datei löschen
-
+      GlobalEventBus.Post(TEventFactory.NewDeleteAlbumEvent(Data.Album));
+      FAlbums.DeleteAlbum(Data.Album);
       FTree.DeleteNode(Node);
 
       if NextNode <> nil then
@@ -105,6 +105,7 @@ begin
           FTree.FocusedNode := NextNode;
           FTree.Selected[NextNode] := true;
         end;
+      FTree.EndUpdate;
     end;
 end;
 
@@ -125,6 +126,8 @@ begin
 
   FTree.FocusedNode := Result;
   FTree.Selected[Result] := true;
+
+  FAlbums.SortAlbumList;
 end;
 
 procedure TPhotoAlbumTreeVisualizer.Edited(Sender: TBaseVirtualTree;
@@ -198,6 +201,7 @@ begin
   Data := FTree.GetNodeData(Node);
   IsNew := Data.Album.Filename = '';
   Data.Album.Name := NewText;
+  FAlbums.SortAlbumList;
 
   if IsNew then
     GlobalEventBus.Post(TEventFactory.NewNewAlbumEvent(Data.Album));

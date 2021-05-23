@@ -22,16 +22,22 @@ type
     property Value: TApplicationSettingValue read GetValue;
   end;
 
-  IActiveAlbumChangeEvent = interface
-    ['{893EB4AD-D972-4E91-B480-A6E44965F1A8}']
+  IAlbumEvent = interface
+    ['{9E183A86-85E2-4B2D-8D3F-146FB110577A}']
     function GetAlbum: TPhotoAlbum;
     property Album: TPhotoAlbum read GetAlbum;
   end;
 
-  INewAlbumEvent = interface
-    ['{B27A31A7-C403-4557-88DA-1F2E207140A3}']
-    function GetAlbum: TPhotoAlbum;
-    property Album: TPhotoAlbum read GetAlbum;
+  IActiveAlbumChangeEvent = interface(IAlbumEvent)
+    ['{667CAB13-E01D-4F33-BECE-01D6D6FB20DE}']
+  end;
+
+  INewAlbumEvent = interface(IAlbumEvent)
+    ['{6314FC2E-8AB9-4703-9F3E-036337E1811B}']
+  end;
+
+  IDeleteAlbumEvent = interface(IAlbumEvent)
+    ['{E5DD81B7-726D-4210-A217-A699F06F499F}']
   end;
 
   INewAlbumItemEvent = interface
@@ -52,6 +58,8 @@ type
       const AAlbum: TPhotoAlbum): IActiveAlbumChangeEvent;
     class function NewNewAlbumEvent(
       const AAlbum: TPhotoAlbum): INewAlbumEvent;
+    class function NewDeleteAlbumEvent(
+      const AAlbum: TPhotoAlbum): IDeleteAlbumEvent;
     class function NewNewAlbumItemEvent(const AAlbum: TPhotoAlbum;
       const AFilename: String): INewAlbumItemEvent;
   end;
@@ -84,25 +92,21 @@ type
     property Value: TApplicationSettingValue read GetValue;
   end;
 
-  TActiveAlbumChangeEvent = class(TInterfacedObject, IActiveAlbumChangeEvent)
+  TAbstractAlbumChangeEvent = class(TInterfacedObject)
   private
     FAlbum: TPhotoAlbum;
   protected
     function GetAlbum: TPhotoAlbum;
   public
-    constructor Create(const AAlbum: TPhotoAlbum);
+    constructor Create(const AAlbum: TPhotoAlbum); virtual;
     property Album: TPhotoAlbum read GetAlbum;
   end;
 
-  TNewAlbumEvent = class(TInterfacedObject, INewAlbumEvent)
-  private
-    FAlbum: TPhotoAlbum;
-  protected
-    function GetAlbum: TPhotoAlbum;
-  public
-    constructor Create(const AAlbum: TPhotoAlbum);
-    property Album: TPhotoAlbum read GetAlbum;
-  end;
+  TActiveAlbumChangeEvent = class(TAbstractAlbumChangeEvent, IActiveAlbumChangeEvent);
+
+  TNewAlbumEvent = class(TAbstractAlbumChangeEvent, INewAlbumEvent);
+
+  TDeleteAlbumEvent = class(TAbstractAlbumChangeEvent, IDeleteAlbumEvent);
 
   TNewAlbumItemEvent = class(TInterfacedObject, INewAlbumItemEvent)
   private
@@ -123,6 +127,12 @@ class function TEventFactory.NewActiveAlbumChangeEvent(
   const AAlbum: TPhotoAlbum): IActiveAlbumChangeEvent;
 begin
   Result := TActiveAlbumChangeEvent.Create(AAlbum);
+end;
+
+class function TEventFactory.NewDeleteAlbumEvent(
+  const AAlbum: TPhotoAlbum): IDeleteAlbumEvent;
+begin
+  Result := TDeleteAlbumEvent.Create(AAlbum);
 end;
 
 class function TEventFactory.NewNewAlbumEvent(
@@ -187,28 +197,15 @@ begin
   Result := FValue;
 end;
 
-{ TActiveAlbumChangeEvent }
+{ TAbstractAlbumChangeEvent }
 
-constructor TActiveAlbumChangeEvent.Create(const AAlbum: TPhotoAlbum);
+constructor TAbstractAlbumChangeEvent.Create(const AAlbum: TPhotoAlbum);
 begin
   inherited Create;
   FAlbum := AAlbum;
 end;
 
-function TActiveAlbumChangeEvent.GetAlbum: TPhotoAlbum;
-begin
-  Result := FAlbum;
-end;
-
-{ TNewAlbumEvent }
-
-constructor TNewAlbumEvent.Create(const AAlbum: TPhotoAlbum);
-begin
-  inherited Create;
-  FAlbum := AAlbum;
-end;
-
-function TNewAlbumEvent.GetAlbum: TPhotoAlbum;
+function TAbstractAlbumChangeEvent.GetAlbum: TPhotoAlbum;
 begin
   Result := FAlbum;
 end;

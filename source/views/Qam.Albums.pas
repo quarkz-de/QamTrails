@@ -24,23 +24,26 @@ type
     tbToolbar: TToolBar;
     vilIcons: TVirtualImageList;
     alActions: TActionList;
-    ToolButton1: TToolButton;
+    btNewAlbum: TToolButton;
     acNewAlbum: TAction;
     velFotos: TVirtualMultiPathExplorerEasyListview;
+    acDeleteAlbum: TAction;
+    btDeleteAlbum: TToolButton;
+    procedure acDeleteAlbumExecute(Sender: TObject);
     procedure acNewAlbumExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure stAlbumsFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex);
     procedure velFotosKeyAction(Sender: TCustomEasyListview; var CharCode: Word;
-        var Shift: TShiftState; var DoDefault: Boolean);
-    procedure velFotosOLEDragDrop(Sender: TCustomEasyListview; DataObject:
-        IDataObject; KeyState: TCommonKeyStates; WindowPt: TPoint;
-        AvailableEffects: TCommonDropEffects; var DesiredDropEffect:
-        TCommonDropEffect; var Handled: Boolean);
-    procedure velFotosOLEDragEnter(Sender: TCustomEasyListview; DataObject:
-        IDataObject; KeyState: TCommonKeyStates; WindowPt: TPoint;
-        AvailableEffects: TCommonDropEffects; var DesiredDropEffect:
-        TCommonDropEffect);
+      var Shift: TShiftState; var DoDefault: Boolean);
+    procedure velFotosOLEDragDrop(Sender: TCustomEasyListview;
+      DataObject: IDataObject; KeyState: TCommonKeyStates; WindowPt: TPoint;
+      AvailableEffects: TCommonDropEffects;
+      var DesiredDropEffect: TCommonDropEffect; var Handled: Boolean);
+    procedure velFotosOLEDragEnter(Sender: TCustomEasyListview;
+      DataObject: IDataObject; KeyState: TCommonKeyStates; WindowPt: TPoint;
+      AvailableEffects: TCommonDropEffects;
+      var DesiredDropEffect: TCommonDropEffect);
   private
     FAlbumVisualizer: IPhotoAlbumTreeVisualizer;
     function GetActiveAlbum: TPhotoAlbum;
@@ -48,6 +51,7 @@ type
     procedure AlbumChanged;
     procedure SetRootFolder;
     function GetHDropFormat: TFormatEtc;
+    procedure UpdateAvailableActions;
   public
     property ActiveAlbum: TPhotoAlbum read GetActiveAlbum;
     [Subscribe]
@@ -71,6 +75,11 @@ uses
   Spring.Container, Spring.Collections,
   Qam.DataModule, Qam.Settings;
 
+procedure TwAlbums.acDeleteAlbumExecute(Sender: TObject);
+begin
+  FAlbumVisualizer.DeleteSelectedAlbum;
+end;
+
 procedure TwAlbums.acNewAlbumExecute(Sender: TObject);
 begin
   FAlbumVisualizer.NewAlbum;
@@ -84,10 +93,13 @@ begin
   velFotos.BeginUpdate;
   try
     velFotos.Clear;
-    for I := 0 to ActiveAlbum.Filenames.Count - 1 do
+    if ActiveAlbum <> nil then
       begin
-        PIDL := PathToPIDL(ActiveAlbum.Filenames[I]);
-        velFotos.AddCustomItem(nil, TNamespace.Create(PIDL, nil), True);
+        for I := 0 to ActiveAlbum.Filenames.Count - 1 do
+          begin
+            PIDL := PathToPIDL(ActiveAlbum.Filenames[I]);
+            velFotos.AddCustomItem(nil, TNamespace.Create(PIDL, nil), True);
+          end;
       end;
   finally
     velFotos.EndUpdate;
@@ -105,6 +117,7 @@ begin
   velFotos.ThumbsManager.AutoSave := true;
 
   LoadAlbums;
+  UpdateAvailableActions;
 end;
 
 function TwAlbums.GetActiveAlbum: TPhotoAlbum;
@@ -133,6 +146,7 @@ end;
 procedure TwAlbums.OnNewAlbum(AEvent: INewAlbumEvent);
 begin
   FAlbumVisualizer.AddAlbum(AEvent.Album);
+  UpdateAvailableActions;
 end;
 
 procedure TwAlbums.OnNewAlbumItem(AEvent: INewAlbumItemEvent);
@@ -168,6 +182,15 @@ procedure TwAlbums.stAlbumsFocusChanged(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Column: TColumnIndex);
 begin
   AlbumChanged;
+  UpdateAvailableActions;
+end;
+
+procedure TwAlbums.UpdateAvailableActions;
+var
+  HasActiveAlbum: Boolean;
+begin
+  HasActiveAlbum := GetActiveAlbum <> nil;
+  acDeleteAlbum.Enabled := HasActiveAlbum;
 end;
 
 procedure TwAlbums.velFotosKeyAction(Sender: TCustomEasyListview;

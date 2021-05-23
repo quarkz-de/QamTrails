@@ -46,12 +46,20 @@ object wAlbums: TwAlbums
     Top = 0
     Width = 651
     Height = 29
+    ButtonHeight = 30
+    ButtonWidth = 31
     Caption = 'ToolBar1'
+    Images = vilIcons
     TabOrder = 1
-    object ToolButton1: TToolButton
+    object btNewAlbum: TToolButton
       Left = 0
       Top = 0
       Action = acNewAlbum
+    end
+    object btDeleteAlbum: TToolButton
+      Left = 31
+      Top = 0
+      Action = acDeleteAlbum
     end
   end
   object velFotos: TVirtualMultiPathExplorerEasyListview
@@ -152,18 +160,24 @@ object wAlbums: TwAlbums
       end
       item
         CollectionIndex = 8
+        CollectionName = '008_Add_Gallery'
+        Disabled = False
+        Name = '008_Add_Gallery'
+      end
+      item
+        CollectionIndex = 9
         CollectionName = '008_Delete'
         Disabled = False
         Name = '008_Delete'
       end
       item
-        CollectionIndex = 9
+        CollectionIndex = 10
         CollectionName = '009_Edit'
         Disabled = False
         Name = '009_Edit'
       end
       item
-        CollectionIndex = 10
+        CollectionIndex = 11
         CollectionName = '010_Add_To_Album'
         Disabled = False
         Name = '010_Add_To_Album'
@@ -179,7 +193,15 @@ object wAlbums: TwAlbums
     Left = 68
     Top = 84
     object acNewAlbum: TAction
+      ImageIndex = 8
+      ImageName = '008_Add_Gallery'
       OnExecute = acNewAlbumExecute
+    end
+    object acDeleteAlbum: TAction
+      Caption = 'acDeleteAlbum'
+      ImageIndex = 9
+      ImageName = '008_Delete'
+      OnExecute = acDeleteAlbumExecute
     end
   end
 end

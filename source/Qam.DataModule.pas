@@ -18,7 +18,6 @@ type
   private
     procedure ThemeChangeEvent(Sender: TObject);
     procedure ThemeChanged;
-    procedure LoadDatabase;
   public
     procedure MainFormCreated;
     function GetImageCollection: TImageCollection;
@@ -65,11 +64,6 @@ begin
     Result := icDarkIcons;
 end;
 
-procedure TdmCommon.LoadDatabase;
-begin
-  TDataStorage.Initialize;
-end;
-
 procedure TdmCommon.MainFormCreated;
 begin
   ThemeChanged;
@@ -82,6 +76,7 @@ begin
   case AEvent.Value of
     svMainCollectionFolder:
       begin
+        TDataStorage.Initialize;
         Albums := GlobalContainer.Resolve<IPhotoAlbumCollection>;
         Albums.LoadAlbumList;
       end;

@@ -46,6 +46,8 @@ type
     property Albums: IList<TPhotoAlbum> read GetAlbums;
     procedure LoadAlbumList;
     procedure SaveAlbumList;
+    procedure SortAlbumList;
+    procedure DeleteAlbum(const AAlbum: TPhotoAlbum);
   end;
 
   TPhotoAlbumCollection = class(TInterfacedObject, IPhotoAlbumCollection)
@@ -58,6 +60,8 @@ type
     property Albums: IList<TPhotoAlbum> read GetAlbums;
     procedure LoadAlbumList;
     procedure SaveAlbumList;
+    procedure SortAlbumList;
+    procedure DeleteAlbum(const AAlbum: TPhotoAlbum);
   end;
 
 implementation
@@ -78,6 +82,11 @@ type
     class function ExpandAlbumFilename(const AFilename: String): String;
     class function CreateUniqueFilename: String;
   end;
+
+function CompareAlbumByName(const Left, Right: TPhotoAlbum): Integer;
+begin
+  Result := AnsiCompareStr(Left.Name, Right.Name);
+end;
 
 { TPhotoAlbum }
 
@@ -138,6 +147,17 @@ begin
   FList := TCollections.CreateObjectList<TPhotoAlbum>;
 end;
 
+procedure TPhotoAlbumCollection.DeleteAlbum(const AAlbum: TPhotoAlbum);
+var
+  Index: Integer;
+begin
+  if TFile.Exists(AAlbum.Filename) then
+    TFile.Delete(AAlbum.Filename);
+  Index := FList.IndexOf(AAlbum);
+  if Index > -1 then
+    FList.Delete(Index);
+end;
+
 function TPhotoAlbumCollection.GetAlbums: IList<TPhotoAlbum>;
 begin
   Result := FList;
@@ -173,6 +193,8 @@ begin
 
   if Albums.Count = 0 then
     AddDefaultAlbum;
+
+  SortAlbumList;
 end;
 
 procedure TPhotoAlbumCollection.SaveAlbumList;
@@ -192,6 +214,11 @@ begin
         JSON.Free;
         Album.Modified := false;
       end;
+end;
+
+procedure TPhotoAlbumCollection.SortAlbumList;
+begin
+  Albums.Sort(CompareAlbumByName);
 end;
 
 { TPhotoAlbumHelper }

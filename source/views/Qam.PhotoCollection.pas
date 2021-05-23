@@ -69,6 +69,10 @@ type
     procedure OnSettingChange(AEvent: ISettingChangeEvent);
     [Subscribe]
     procedure OnActiveAlbumChange(AEvent: IActiveAlbumChangeEvent);
+    [Subscribe]
+    procedure OnNewAlbum(AEvent: INewAlbumEvent);
+    [Subscribe]
+    procedure OnDeleteAlbum(AEvent: IDeleteAlbumEvent);
   end;
 
 var
@@ -130,7 +134,7 @@ var
 begin
   Albums := GlobalContainer.Resolve<IPhotoAlbumCollection>;
   if cbAlbums.ItemIndex > -1 then
-    SetActiveAlbum(Albums.Albums[cbAlbums.ItemIndex]);
+    SetActiveAlbum(TPhotoAlbum(cbAlbums.Items.Objects[cbAlbums.ItemIndex]));
 end;
 
 procedure TwPhotoCollection.FormCreate(Sender: TObject);
@@ -153,6 +157,36 @@ procedure TwPhotoCollection.OnActiveAlbumChange(
   AEvent: IActiveAlbumChangeEvent);
 begin
   ActiveAlbum := AEvent.Album;
+end;
+
+procedure TwPhotoCollection.OnDeleteAlbum(AEvent: IDeleteAlbumEvent);
+var
+  Albums: IPhotoAlbumCollection;
+  OldIndex, Index: Integer;
+begin
+  Albums := GlobalContainer.Resolve<IPhotoAlbumCollection>;
+  if cbAlbums.ItemIndex > -1 then
+    begin
+      Index := cbAlbums.Items.IndexofObject(AEvent.Album);
+      OldIndex := cbAlbums.ItemIndex;
+      if Index >-1 then
+        begin
+          cbAlbums.Items.Delete(Index);
+          if (cbAlbums.ItemIndex < 0) and (OldIndex > -1) then
+            begin
+              if OldIndex >= cbAlbums.Items.Count then
+                cbAlbums.ItemIndex := cbAlbums.Items.Count - 1
+              else
+                cbAlbums.ItemIndex := OldIndex;
+              ChangeActiveAlbum;
+            end;
+        end;
+    end;
+end;
+
+procedure TwPhotoCollection.OnNewAlbum(AEvent: INewAlbumEvent);
+begin
+
 end;
 
 procedure TwPhotoCollection.OnSettingChange(AEvent: ISettingChangeEvent);
@@ -248,7 +282,7 @@ begin
   cbAlbums.Items.BeginUpdate;
   cbAlbums.Items.Clear;
   for Album in Albums.Albums do
-    cbAlbums.Items.Add(Album.Name);
+    cbAlbums.Items.AddObject(Album.Name, Album);
   cbAlbums.Items.EndUpdate;
 
   if cbAlbums.Items.Count > 0 then
