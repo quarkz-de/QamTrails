@@ -234,18 +234,24 @@ object wMain: TwMain
       end
       item
         CollectionIndex = 8
+        CollectionName = '008_Add_Gallery'
+        Disabled = False
+        Name = '008_Add_Gallery'
+      end
+      item
+        CollectionIndex = 9
         CollectionName = '008_Delete'
         Disabled = False
         Name = '008_Delete'
       end
       item
-        CollectionIndex = 9
+        CollectionIndex = 10
         CollectionName = '009_Edit'
         Disabled = False
         Name = '009_Edit'
       end
       item
-        CollectionIndex = 10
+        CollectionIndex = 11
         CollectionName = '010_Add_To_Album'
         Disabled = False
         Name = '010_Add_To_Album'
@@ -382,18 +388,24 @@ object wMain: TwMain
       end
       item
         CollectionIndex = 8
+        CollectionName = '008_Add_Gallery'
+        Disabled = False
+        Name = '008_Add_Gallery'
+      end
+      item
+        CollectionIndex = 9
         CollectionName = '008_Delete'
         Disabled = False
         Name = '008_Delete'
       end
       item
-        CollectionIndex = 9
+        CollectionIndex = 10
         CollectionName = '009_Edit'
         Disabled = False
         Name = '009_Edit'
       end
       item
-        CollectionIndex = 10
+        CollectionIndex = 11
         CollectionName = '010_Add_To_Album'
         Disabled = False
         Name = '010_Add_To_Album'

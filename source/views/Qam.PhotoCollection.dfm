@@ -113,8 +113,6 @@ object wPhotoCollection: TwPhotoCollection
       OnEnumFolder = velFotosEnumFolder
       OnItemSelectionChanged = velFotosItemSelectionChanged
       OnOLEDragStart = velFotosOLEDragStart
-      ExplicitLeft = 3
-      ExplicitTop = -2
     end
     object pnPreview: TPanel
       Left = 0
@@ -165,7 +163,7 @@ object wPhotoCollection: TwPhotoCollection
     end
     object cbAlbums: TComboBox
       Left = 101
-      Top = 4
+      Top = 0
       Width = 145
       Height = 21
       Align = alCustom
@@ -234,18 +232,24 @@ object wPhotoCollection: TwPhotoCollection
       end
       item
         CollectionIndex = 8
+        CollectionName = '008_Add_Gallery'
+        Disabled = False
+        Name = '008_Add_Gallery'
+      end
+      item
+        CollectionIndex = 9
         CollectionName = '008_Delete'
         Disabled = False
         Name = '008_Delete'
       end
       item
-        CollectionIndex = 9
+        CollectionIndex = 10
         CollectionName = '009_Edit'
         Disabled = False
         Name = '009_Edit'
       end
       item
-        CollectionIndex = 10
+        CollectionIndex = 11
         CollectionName = '010_Add_To_Album'
         Disabled = False
         Name = '010_Add_To_Album'
@@ -285,7 +289,7 @@ object wPhotoCollection: TwPhotoCollection
     object acAddToActiveAlbum: TAction
       Caption = 'acAddToActiveAlbum'
       Hint = 'Dem aktuellen Album hinzuf'#252'gen'
-      ImageIndex = 10
+      ImageIndex = 11
       ImageName = '010_Add_To_Album'
       OnExecute = acAddToActiveAlbumExecute
     end
