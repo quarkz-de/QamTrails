@@ -179,27 +179,33 @@ object wAlbums: TwAlbums
       end
       item
         CollectionIndex = 9
-        CollectionName = '008_Delete'
+        CollectionName = '009_Delete'
         Disabled = False
-        Name = '008_Delete'
+        Name = '009_Delete'
       end
       item
         CollectionIndex = 10
-        CollectionName = '009_Edit'
+        CollectionName = '010_Edit'
         Disabled = False
-        Name = '009_Edit'
+        Name = '010_Edit'
       end
       item
         CollectionIndex = 11
-        CollectionName = '010_Add_To_Album'
+        CollectionName = '011_Add_To_Album'
         Disabled = False
-        Name = '010_Add_To_Album'
+        Name = '011_Add_To_Album'
       end
       item
         CollectionIndex = 12
-        CollectionName = '011_Remove_From_Album'
+        CollectionName = '012_Remove_From_Album'
         Disabled = False
-        Name = '011_Remove_From_Album'
+        Name = '012_Remove_From_Album'
+      end
+      item
+        CollectionIndex = 13
+        CollectionName = '013_Add_Folder'
+        Disabled = False
+        Name = '013_Add_Folder'
       end>
     ImageCollection = dmCommon.icDarkIcons
     Width = 24
@@ -219,13 +225,13 @@ object wAlbums: TwAlbums
     object acDeleteAlbum: TAction
       Caption = 'acDeleteAlbum'
       ImageIndex = 9
-      ImageName = '008_Delete'
+      ImageName = '009_Delete'
       OnExecute = acDeleteAlbumExecute
     end
     object acRemoveItem: TAction
       Caption = 'acRemoveItem'
       ImageIndex = 12
-      ImageName = '011_Remove_From_Album'
+      ImageName = '012_Remove_From_Album'
       ShortCut = 46
       OnExecute = acRemoveItemExecute
     end

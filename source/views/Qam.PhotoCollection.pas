@@ -34,7 +34,11 @@ type
     acAddToActiveAlbum: TAction;
     tbAddToActiveAlbum: TToolButton;
     cbAlbums: TComboBox;
+    acNewFolder: TAction;
+    tbNewFolder: TToolButton;
+    ToolButton1: TToolButton;
     procedure acAddToActiveAlbumExecute(Sender: TObject);
+    procedure acNewFolderExecute(Sender: TObject);
     procedure acViewDetailsExecute(Sender: TObject);
     procedure acViewPreviewExecute(Sender: TObject);
     procedure acViewThumbnailsExecute(Sender: TObject);
@@ -111,6 +115,11 @@ begin
     end
   else
     ShowMessage('Kein Album ausgewählt.');
+end;
+
+procedure TwPhotoCollection.acNewFolderExecute(Sender: TObject);
+begin
+  vetFolders.CreateNewFolder(vetFolders.RootFolderNamespace.NameForParsing);
 end;
 
 procedure TwPhotoCollection.acViewDetailsExecute(Sender: TObject);

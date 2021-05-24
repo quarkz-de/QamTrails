@@ -46,7 +46,7 @@ object wPhotoCollection: TwPhotoCollection
     TreeOptions.MiscOptions = [toAcceptOLEDrop, toEditable, toToggleOnDblClick]
     TreeOptions.PaintOptions = [toHideSelection, toShowButtons, toShowTreeLines, toUseBlendedImages, toGhostedIfUnfocused]
     TreeOptions.SelectionOptions = [toLevelSelectConstraint]
-    TreeOptions.VETShellOptions = [toContextMenus]
+    TreeOptions.VETShellOptions = []
     TreeOptions.VETSyncOptions = [toCollapseTargetFirst, toExpandTarget, toSelectTarget]
     TreeOptions.VETMiscOptions = [toBrowseExecuteFolder, toBrowseExecuteFolderShortcut, toBrowseExecuteZipFolder, toChangeNotifierThread, toRemoveContextMenuShortCut]
     TreeOptions.VETImageOptions = [toImages, toThreadedImages, toMarkCutAndCopy]
@@ -97,7 +97,6 @@ object wPhotoCollection: TwPhotoCollection
       Grouped = True
       GroupingColumn = 0
       OnRebuiltShellHeader = velFotosRebuiltShellHeader
-      Options = [eloBrowseExecuteFolder, eloBrowseExecuteFolderShortcut, eloBrowseExecuteZipFolder, eloExecuteOnDblClick, eloThreadedImages, eloThreadedDetails, eloShellContextMenus]
       PaintInfoGroup.MarginBottom.CaptionIndent = 4
       PaintInfoGroup.MarginTop.Visible = False
       ShowGroupMargins = True
@@ -162,8 +161,22 @@ object wPhotoCollection: TwPhotoCollection
       Caption = 'tbDivider1'
       Style = tbsSeparator
     end
-    object cbAlbums: TComboBox
+    object tbNewFolder: TToolButton
       Left = 101
+      Top = 0
+      Action = acNewFolder
+    end
+    object ToolButton1: TToolButton
+      Left = 132
+      Top = 0
+      Width = 8
+      Caption = 'ToolButton1'
+      ImageIndex = 12
+      ImageName = '012_Remove_From_Album'
+      Style = tbsSeparator
+    end
+    object cbAlbums: TComboBox
+      Left = 140
       Top = 4
       Width = 145
       Height = 21
@@ -173,7 +186,7 @@ object wPhotoCollection: TwPhotoCollection
       OnChange = cbAlbumsChange
     end
     object tbAddToActiveAlbum: TToolButton
-      Left = 246
+      Left = 285
       Top = 0
       Action = acAddToActiveAlbum
     end
@@ -239,27 +252,33 @@ object wPhotoCollection: TwPhotoCollection
       end
       item
         CollectionIndex = 9
-        CollectionName = '008_Delete'
+        CollectionName = '009_Delete'
         Disabled = False
-        Name = '008_Delete'
+        Name = '009_Delete'
       end
       item
         CollectionIndex = 10
-        CollectionName = '009_Edit'
+        CollectionName = '010_Edit'
         Disabled = False
-        Name = '009_Edit'
+        Name = '010_Edit'
       end
       item
         CollectionIndex = 11
-        CollectionName = '010_Add_To_Album'
+        CollectionName = '011_Add_To_Album'
         Disabled = False
-        Name = '010_Add_To_Album'
+        Name = '011_Add_To_Album'
       end
       item
         CollectionIndex = 12
-        CollectionName = '011_Remove_From_Album'
+        CollectionName = '012_Remove_From_Album'
         Disabled = False
-        Name = '011_Remove_From_Album'
+        Name = '012_Remove_From_Album'
+      end
+      item
+        CollectionIndex = 13
+        CollectionName = '013_Add_Folder'
+        Disabled = False
+        Name = '013_Add_Folder'
       end>
     ImageCollection = dmCommon.icDarkIcons
     Width = 24
@@ -297,9 +316,15 @@ object wPhotoCollection: TwPhotoCollection
       Caption = 'acAddToActiveAlbum'
       Hint = 'Dem aktuellen Album hinzuf'#252'gen'
       ImageIndex = 11
-      ImageName = '010_Add_To_Album'
+      ImageName = '011_Add_To_Album'
       ShortCut = 45
       OnExecute = acAddToActiveAlbumExecute
+    end
+    object acNewFolder: TAction
+      Caption = 'Neuer Ordner'
+      ImageIndex = 13
+      ImageName = '013_Add_Folder'
+      OnExecute = acNewFolderExecute
     end
   end
 end
