@@ -264,6 +264,18 @@ object wMain: TwMain
         CollectionName = '013_Add_Folder'
         Disabled = False
         Name = '013_Add_Folder'
+      end
+      item
+        CollectionIndex = 14
+        CollectionName = '014_Rotate_Left'
+        Disabled = False
+        Name = '014_Rotate_Left'
+      end
+      item
+        CollectionIndex = 15
+        CollectionName = '015_Rotate_Right'
+        Disabled = False
+        Name = '015_Rotate_Right'
       end>
     ImageCollection = dmCommon.icDarkIcons
     Width = 32
@@ -430,6 +442,18 @@ object wMain: TwMain
         CollectionName = '013_Add_Folder'
         Disabled = False
         Name = '013_Add_Folder'
+      end
+      item
+        CollectionIndex = 14
+        CollectionName = '014_Rotate_Left'
+        Disabled = False
+        Name = '014_Rotate_Left'
+      end
+      item
+        CollectionIndex = 15
+        CollectionName = '015_Rotate_Right'
+        Disabled = False
+        Name = '015_Rotate_Right'
       end>
     ImageCollection = dmCommon.icDarkIcons
     Left = 476
