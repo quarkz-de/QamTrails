@@ -151,6 +151,7 @@ begin
   Albums := GlobalContainer.Resolve<IPhotoAlbumCollection>;
   if cbAlbums.ItemIndex > -1 then
     SetActiveAlbum(TPhotoAlbum(cbAlbums.Items.Objects[cbAlbums.ItemIndex]));
+  velFotos.Rebuild;
 end;
 
 procedure TwPhotoCollection.FormCreate(Sender: TObject);

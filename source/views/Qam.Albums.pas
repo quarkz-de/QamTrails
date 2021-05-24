@@ -203,13 +203,16 @@ var
   Item: TEasyItem;
   Index: Integer;
 begin
-  Item := velFotos.FindItemByPath(AEvent.Filename);
-  if Item <> nil then
-    velFotos.Items.Delete(velFotos.Items.IndexOf(Item));
+  if ActiveAlbum = AEvent.Album then
+    begin
+      Item := velFotos.FindItemByPath(AEvent.Filename);
+      if Item <> nil then
+        velFotos.Items.Delete(velFotos.Items.IndexOf(Item));
 
-  Index := ActiveAlbum.Filenames.IndexOf(AEvent.Filename);
-  if Index > -1 then
-    ActiveAlbum.Filenames.Delete(Index);
+      Index := ActiveAlbum.Filenames.IndexOf(AEvent.Filename);
+      if Index > -1 then
+        ActiveAlbum.Filenames.Delete(Index);
+    end;
 end;
 
 procedure TwAlbums.OnNewAlbum(AEvent: INewAlbumEvent);
