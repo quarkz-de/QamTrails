@@ -102,8 +102,12 @@ object wAlbums: TwAlbums
     DragManager.Enabled = True
     Grouped = False
     GroupingColumn = 0
+    PaintInfoGroup.BandColor = clHighlight
+    PaintInfoGroup.BandFullWidth = True
+    PaintInfoGroup.BandThickness = 2
     PaintInfoGroup.MarginBottom.CaptionIndent = 4
     PaintInfoGroup.MarginTop.Visible = False
+    PaintInfoItem.HideCaption = True
     ParentCtl3D = False
     ShowThemedBorder = False
     Sort.Algorithm = esaQuickSort

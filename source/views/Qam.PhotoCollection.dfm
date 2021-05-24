@@ -97,8 +97,13 @@ object wPhotoCollection: TwPhotoCollection
       Grouped = True
       GroupingColumn = 0
       OnRebuiltShellHeader = velFotosRebuiltShellHeader
+      PaintInfoGroup.BandColor = clHighlight
+      PaintInfoGroup.BandFullWidth = True
+      PaintInfoGroup.BandThickness = 2
       PaintInfoGroup.MarginBottom.CaptionIndent = 4
       PaintInfoGroup.MarginTop.Visible = False
+      PaintInfoItem.CheckType = ectBox
+      PaintInfoItem.HideCaption = True
       ShowGroupMargins = True
       ShowThemedBorder = False
       Sort.Algorithm = esaQuickSort
@@ -110,6 +115,8 @@ object wPhotoCollection: TwPhotoCollection
       View = elsThumbnail
       OnCustomGroup = velFotosCustomGroup
       OnEnumFolder = velFotosEnumFolder
+      OnItemCheckChange = velFotosItemCheckChange
+      OnItemInitialize = velFotosItemInitialize
       OnItemSelectionChanged = velFotosItemSelectionChanged
       OnOLEDragStart = velFotosOLEDragStart
     end
@@ -177,7 +184,7 @@ object wPhotoCollection: TwPhotoCollection
     end
     object cbAlbums: TComboBox
       Left = 140
-      Top = 4
+      Top = 0
       Width = 145
       Height = 21
       Align = alCustom

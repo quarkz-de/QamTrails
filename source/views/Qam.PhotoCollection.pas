@@ -48,6 +48,8 @@ type
         Groups: TEasyGroups; NS: TNamespace; var Group: TExplorerGroup);
     procedure velFotosEnumFolder(Sender: TCustomVirtualExplorerEasyListview;
       Namespace: TNamespace; var AllowAsChild: Boolean);
+    procedure velFotosItemCheckChange(Sender: TCustomEasyListview; Item: TEasyItem);
+    procedure velFotosItemInitialize(Sender: TCustomEasyListview; Item: TEasyItem);
     procedure velFotosItemSelectionChanged(Sender: TCustomEasyListview;
       Item: TEasyItem);
     procedure velFotosOLEDragStart(Sender: TCustomEasyListview;
@@ -392,6 +394,56 @@ begin
             Break;
           end;
     end;
+end;
+
+procedure TwPhotoCollection.velFotosItemCheckChange(
+  Sender: TCustomEasyListview; Item: TEasyItem);
+var
+  ExplorerItem: TExplorerItem;
+  Filename: String;
+  Index: Integer;
+begin
+  if ActiveAlbum = nil then
+    Exit;
+
+  if not (Item is TExplorerItem) then
+    Exit;
+
+  ExplorerItem := TExplorerItem(Item);
+  if ExplorerItem.Namespace = nil then
+    Exit;
+
+  Filename := ExplorerItem.Namespace.NameForParsing;
+  Index := ActiveAlbum.Filenames.IndexOf(Filename);
+
+  if Item.Checked then
+    begin
+      if Index < 0 then
+        begin
+          ActiveAlbum.Filenames.Add(Filename);
+          GlobalEventBus.Post(TEventFactory.NewNewAlbumItemEvent(ActiveAlbum, Filename));
+        end;
+    end
+  else
+    begin
+      if Index > -1 then
+        begin
+          ActiveAlbum.Filenames.Delete(Index);
+          GlobalEventBus.Post(TEventFactory.NewDeleteAlbumItemEvent(ActiveAlbum, Filename));
+        end;
+    end;
+end;
+
+procedure TwPhotoCollection.velFotosItemInitialize(Sender: TCustomEasyListview;
+  Item: TEasyItem);
+var
+  ExplorerItem: TExplorerItem;
+begin
+  if ActiveAlbum = nil then
+    Exit;
+
+  ExplorerItem := TExplorerItem(Item);
+  Item.Checked := ActiveAlbum.Filenames.IndexOf(ExplorerItem.Namespace.NameForParsing) > -1;
 end;
 
 procedure TwPhotoCollection.velFotosItemSelectionChanged(Sender:

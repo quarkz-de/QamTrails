@@ -68,6 +68,8 @@ type
     [Subscribe]
     procedure OnNewAlbumItem(AEvent: INewAlbumItemEvent);
     [Subscribe]
+    procedure OnDeleteAlbumItem(AEvent: IDeleteAlbumItemEvent);
+    [Subscribe]
     procedure OnSettingChange(AEvent: ISettingChangeEvent);
   end;
 
@@ -108,8 +110,8 @@ end;
 
 procedure TwAlbums.acRemoveItemExecute(Sender: TObject);
 var
-  I: Integer;
   FilesToDelete: TStringList;
+  Filename: String;
 begin
   FilesToDelete := TStringList.Create;
   FilesToDelete.Assign(velFotos.SelectedPaths);
@@ -117,10 +119,12 @@ begin
   if FilesToDelete.Count > 0 then
     begin
       velFotos.BeginUpdate;
-      for I := 0 to FilesToDelete.Count - 1 do
+
+      for Filename in FilesToDelete do
         begin
-          ActiveAlbum.Filenames.Delete(ActiveAlbum.Filenames.IndexOf(FilesToDelete[I]));
-          velFotos.Items.Delete(velFotos.Items.IndexOf(velFotos.FindItemByPath(FilesToDelete[I])));
+          ActiveAlbum.Filenames.Delete(ActiveAlbum.Filenames.IndexOf(Filename));
+          velFotos.Items.Delete(velFotos.Items.IndexOf(velFotos.FindItemByPath(Filename)));
+          GlobalEventBus.Post(TEventFactory.NewDeleteAlbumItemEvent(ActiveAlbum, Filename));
         end;
 
       ActiveAlbum.Modified := true;
@@ -192,6 +196,20 @@ begin
   Albums := GlobalContainer.Resolve<IPhotoAlbumCollection>;
   FAlbumVisualizer.SetPhotoAlbums(Albums);
   FAlbumVisualizer.UpdateContent;
+end;
+
+procedure TwAlbums.OnDeleteAlbumItem(AEvent: IDeleteAlbumItemEvent);
+var
+  Item: TEasyItem;
+  Index: Integer;
+begin
+  Item := velFotos.FindItemByPath(AEvent.Filename);
+  if Item <> nil then
+    velFotos.Items.Delete(velFotos.Items.IndexOf(Item));
+
+  Index := ActiveAlbum.Filenames.IndexOf(AEvent.Filename);
+  if Index > -1 then
+    ActiveAlbum.Filenames.Delete(Index);
 end;
 
 procedure TwAlbums.OnNewAlbum(AEvent: INewAlbumEvent);

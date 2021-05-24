@@ -40,12 +40,18 @@ type
     ['{E5DD81B7-726D-4210-A217-A699F06F499F}']
   end;
 
-  INewAlbumItemEvent = interface
+  IAlbumItemEvent = interface(IAlbumEvent)
     ['{84B76126-37EA-4E51-AF42-860813567E8C}']
-    function GetAlbum: TPhotoAlbum;
     function GetFilename: String;
-    property Album: TPhotoAlbum read GetAlbum;
     property Filename: String read GetFilename;
+  end;
+
+  INewAlbumItemEvent = interface(IAlbumItemEvent)
+    ['{D20A3C97-59BD-462B-A6EC-21BB8DA2004E}']
+  end;
+
+  IDeleteAlbumItemEvent = interface(IAlbumItemEvent)
+    ['{CCC20637-E159-4533-AB99-FA798AA1FD85}']
   end;
 
   TEventFactory = class
@@ -62,6 +68,8 @@ type
       const AAlbum: TPhotoAlbum): IDeleteAlbumEvent;
     class function NewNewAlbumItemEvent(const AAlbum: TPhotoAlbum;
       const AFilename: String): INewAlbumItemEvent;
+    class function NewDeleteAlbumItemEvent(const AAlbum: TPhotoAlbum;
+      const AFilename: String): IDeleteAlbumItemEvent;
   end;
 
 implementation
@@ -92,7 +100,7 @@ type
     property Value: TApplicationSettingValue read GetValue;
   end;
 
-  TAbstractAlbumChangeEvent = class(TInterfacedObject)
+  TAbstractAlbumEvent = class(TInterfacedObject)
   private
     FAlbum: TPhotoAlbum;
   protected
@@ -102,24 +110,25 @@ type
     property Album: TPhotoAlbum read GetAlbum;
   end;
 
-  TActiveAlbumChangeEvent = class(TAbstractAlbumChangeEvent, IActiveAlbumChangeEvent);
+  TActiveAlbumChangeEvent = class(TAbstractAlbumEvent, IActiveAlbumChangeEvent);
 
-  TNewAlbumEvent = class(TAbstractAlbumChangeEvent, INewAlbumEvent);
+  TNewAlbumEvent = class(TAbstractAlbumEvent, INewAlbumEvent);
 
-  TDeleteAlbumEvent = class(TAbstractAlbumChangeEvent, IDeleteAlbumEvent);
+  TDeleteAlbumEvent = class(TAbstractAlbumEvent, IDeleteAlbumEvent);
 
-  TNewAlbumItemEvent = class(TInterfacedObject, INewAlbumItemEvent)
+  TAbstractAlbumItemEvent = class(TAbstractAlbumEvent, INewAlbumItemEvent)
   private
-    FAlbum: TPhotoAlbum;
     FFilename: String;
   protected
-    function GetAlbum: TPhotoAlbum;
     function GetFilename: String;
   public
-    constructor Create(const AAlbum: TPhotoAlbum; const AFilename: String);
-    property Album: TPhotoAlbum read GetAlbum;
+    constructor Create(const AAlbum: TPhotoAlbum; const AFilename: String); reintroduce;
     property Filename: String read GetFilename;
   end;
+
+  TNewAlbumItemEvent = class(TAbstractAlbumItemEvent, INewAlbumItemEvent);
+
+  TDeleteAlbumItemEvent = class(TAbstractAlbumItemEvent, IDeleteAlbumItemEvent);
 
 { TEventFactory }
 
@@ -133,6 +142,12 @@ class function TEventFactory.NewDeleteAlbumEvent(
   const AAlbum: TPhotoAlbum): IDeleteAlbumEvent;
 begin
   Result := TDeleteAlbumEvent.Create(AAlbum);
+end;
+
+class function TEventFactory.NewDeleteAlbumItemEvent(const AAlbum: TPhotoAlbum;
+  const AFilename: String): IDeleteAlbumItemEvent;
+begin
+  Result := TDeleteAlbumItemEvent.Create(AAlbum, AFilename);
 end;
 
 class function TEventFactory.NewNewAlbumEvent(
@@ -197,35 +212,29 @@ begin
   Result := FValue;
 end;
 
-{ TAbstractAlbumChangeEvent }
+{ TAbstractAlbumEvent }
 
-constructor TAbstractAlbumChangeEvent.Create(const AAlbum: TPhotoAlbum);
+constructor TAbstractAlbumEvent.Create(const AAlbum: TPhotoAlbum);
 begin
   inherited Create;
   FAlbum := AAlbum;
 end;
 
-function TAbstractAlbumChangeEvent.GetAlbum: TPhotoAlbum;
+function TAbstractAlbumEvent.GetAlbum: TPhotoAlbum;
 begin
   Result := FAlbum;
 end;
 
-{ TNewAlbumItemEvent }
+{ TAbstractAlbumItemEvent }
 
-constructor TNewAlbumItemEvent.Create(const AAlbum: TPhotoAlbum;
+constructor TAbstractAlbumItemEvent.Create(const AAlbum: TPhotoAlbum;
   const AFilename: String);
 begin
-  inherited Create;
-  FAlbum := AAlbum;
+  inherited Create(AAlbum);
   FFilename := AFilename;
 end;
 
-function TNewAlbumItemEvent.GetAlbum: TPhotoAlbum;
-begin
-  Result := FAlbum;
-end;
-
-function TNewAlbumItemEvent.GetFilename: String;
+function TAbstractAlbumItemEvent.GetFilename: String;
 begin
   Result := FFilename;
 end;
