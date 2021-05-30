@@ -3,7 +3,7 @@ unit Qam.DataModule;
 interface
 
 uses
-  System.SysUtils, System.Classes, System.IOUtils,
+  System.SysUtils, System.Classes,
   Vcl.BaseImageCollection, Vcl.ImageCollection,
   EventBus,
   Qodelib.Themes,
@@ -31,7 +31,7 @@ var
 implementation
 
 uses
-  Spring, Spring.Collections, Spring.Container,
+  Spring, Spring.Container,
   Qam.Settings, Qam.Storage, Qam.PhotoAlbums;
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}

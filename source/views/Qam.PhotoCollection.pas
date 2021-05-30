@@ -101,9 +101,8 @@ implementation
 
 uses
   Spring.Container,
-  GR32, GR32_Image,
+  GR32,
   CCR.Exif,
-  Qodelib.DropdownForm,
   Qam.Settings, Qam.Storage, Qam.DataModule;
 
 {$R *.dfm}

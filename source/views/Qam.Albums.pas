@@ -7,8 +7,8 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.ImageList,
   System.Actions, System.Math, System.UITypes,
   Generics.Collections,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
-  Vcl.ExtCtrls, Vcl.ControlList, Vcl.ToolWin, Vcl.ComCtrls, Vcl.ImgList,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.ExtCtrls, Vcl.ToolWin, Vcl.ComCtrls, Vcl.ImgList,
   Vcl.VirtualImageList, Vcl.ActnList,
   Eventbus,
   VirtualTrees,
@@ -81,7 +81,7 @@ implementation
 {$R *.dfm}
 
 uses
-  Spring.Container, Spring.Collections,
+  Spring.Container,
   Qam.DataModule, Qam.Settings;
 
 procedure TwAlbums.acDeleteAlbumExecute(Sender: TObject);
