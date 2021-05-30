@@ -8,11 +8,12 @@ uses
   System.ImageList, System.Actions,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Buttons, Vcl.ImgList,
-  Vcl.VirtualImageList, Vcl.ActnList,
+  Vcl.VirtualImageList, Vcl.ActnList, Vcl.Imaging.jpeg,
   Eventbus,
   VirtualTrees, VirtualExplorerEasyListview, VirtualExplorerTree,
   MPCommonObjects, MPShellUtilities, EasyListview, MPCommonUtilities,
-  Qam.Forms, Qam.Events, Qam.PhotoViewer, Qam.Types, Qam.PhotoAlbums;
+  Qam.Forms, Qam.Events, Qam.PhotoViewer, Qam.Types, Qam.PhotoAlbums,
+  Qam.ImageRotate, Qam.JpegLoader;
 
 type
   TwPhotoCollection = class(TApplicationForm)
@@ -37,8 +38,14 @@ type
     acNewFolder: TAction;
     tbNewFolder: TToolButton;
     ToolButton1: TToolButton;
+    acRotateLeft: TAction;
+    acRotateRight: TAction;
+    tbRotateLeft: TToolButton;
+    tbRotateRight: TToolButton;
     procedure acAddToActiveAlbumExecute(Sender: TObject);
     procedure acNewFolderExecute(Sender: TObject);
+    procedure acRotateLeftExecute(Sender: TObject);
+    procedure acRotateRightExecute(Sender: TObject);
     procedure acViewDetailsExecute(Sender: TObject);
     procedure acViewPreviewExecute(Sender: TObject);
     procedure acViewThumbnailsExecute(Sender: TObject);
@@ -70,6 +77,7 @@ type
     procedure ChangeActiveAlbum;
     procedure SelectAlbum(const AIndex: Integer); overload;
     procedure SelectAlbum(const AAlbum: TPhotoAlbum); overload;
+    procedure RotateSelectedImages(const ARotation: TImageRotation);
   protected
     property ActiveAlbum: TPhotoAlbum read GetActiveAlbum write SetActiveAlbum;
   public
@@ -93,6 +101,8 @@ implementation
 
 uses
   Spring.Container,
+  GR32, GR32_Image,
+  CCR.Exif,
   Qodelib.DropdownForm,
   Qam.Settings, Qam.Storage, Qam.DataModule;
 
@@ -122,6 +132,16 @@ end;
 procedure TwPhotoCollection.acNewFolderExecute(Sender: TObject);
 begin
   vetFolders.CreateNewFolder(vetFolders.RootFolderNamespace.NameForParsing);
+end;
+
+procedure TwPhotoCollection.acRotateLeftExecute(Sender: TObject);
+begin
+  RotateSelectedImages(irLeft);
+end;
+
+procedure TwPhotoCollection.acRotateRightExecute(Sender: TObject);
+begin
+  RotateSelectedImages(irRight);
 end;
 
 procedure TwPhotoCollection.acViewDetailsExecute(Sender: TObject);
@@ -238,6 +258,107 @@ end;
 procedure TwPhotoCollection.OnThemeChange(AEvent: IThemeChangeEvent);
 begin
   vilIcons.ImageCollection := dmCommon.GetImageCollection;
+end;
+
+procedure TwPhotoCollection.RotateSelectedImages(
+  const ARotation: TImageRotation);
+var
+  Filename: String;
+  Bitmap: TBitmap;
+  Bitmap32: TBitmap32;
+  Jpeg: TJpegImage;
+  LastWriteTime: TDateTime;
+  ExifData: TExifData;
+begin
+  for Filename in velFotos.SelectedPaths do
+    begin
+      LastWriteTime := TFile.GetLastWriteTime(Filename);
+
+      ExifData := TExifData.Create;
+      ExifData.LoadFromGraphic(FileName);
+
+      Bitmap32 := TBitmap32.Create;
+      TJpegLoader.Load(Filename, Bitmap32);
+
+      case ARotation of
+        irLeft:
+          Bitmap32.Rotate270;
+        irRight:
+          Bitmap32.Rotate90;
+        irUpsideDown:
+          Bitmap32.Rotate180;
+      end;
+
+      Bitmap := TBitmap.Create;
+      Bitmap.Assign(Bitmap32);
+      Jpeg := TJpegImage.Create;
+      Jpeg.Assign(Bitmap);
+      Jpeg.SaveToFile(Filename);
+      Jpeg.Free;
+      Bitmap.Free;
+      Bitmap32.Free;
+
+      if not ExifData.Empty then
+        begin
+          case ExifData.Orientation of
+            toTopLeft:
+              begin
+                case ARotation of
+                  irLeft:
+                    ExifData.Orientation := toRightTop;
+                  irRight:
+                    ExifData.Orientation := toLeftBottom;
+                  irUpsideDown:
+                    ExifData.Orientation := toBottomLeft;
+                end;
+              end;
+            toLeftBottom:
+              begin
+                case ARotation of
+                  irLeft:
+                    ExifData.Orientation := toTopLeft;
+                  irRight:
+                    ExifData.Orientation := toBottomLeft;
+                  irUpsideDown:
+                    ExifData.Orientation := toRightTop;
+                end;
+              end;
+            toBottomLeft:
+              begin
+                case ARotation of
+                  irLeft:
+                    ExifData.Orientation := toLeftBottom;
+                  irRight:
+                    ExifData.Orientation := toRightTop;
+                  irUpsideDown:
+                    ExifData.Orientation := toTopLeft;
+                end;
+              end;
+            toRightTop:
+              begin
+                case ARotation of
+                  irLeft:
+                    ExifData.Orientation := toBottomLeft;
+                  irRight:
+                    ExifData.Orientation := toRightTop;
+                  irUpsideDown:
+                    ExifData.Orientation := toLeftBottom;
+                end;
+              end;
+          end;
+
+          if ExifData.HasThumbnail then
+            TImageRotate.Flip(ExifData.Thumbnail, ARotation);
+
+          ExifData.SaveToGraphic(FileName);
+        end;
+
+      ExifData.Free;
+
+      TFile.SetLastWriteTime(Filename, LastWriteTime);
+
+      velFotos.ThumbsManager.ReloadThumbnail(velFotos.FindItemByPath(Filename));
+    end;
 end;
 
 procedure TwPhotoCollection.SelectAlbum(const AAlbum: TPhotoAlbum);

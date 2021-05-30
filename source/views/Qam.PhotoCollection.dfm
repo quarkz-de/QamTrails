@@ -197,6 +197,16 @@ object wPhotoCollection: TwPhotoCollection
       Top = 0
       Action = acAddToActiveAlbum
     end
+    object tbRotateLeft: TToolButton
+      Left = 316
+      Top = 0
+      Action = acRotateLeft
+    end
+    object tbRotateRight: TToolButton
+      Left = 347
+      Top = 0
+      Action = acRotateRight
+    end
   end
   object vilIcons: TVirtualImageList
     AutoFill = True
@@ -344,6 +354,18 @@ object wPhotoCollection: TwPhotoCollection
       ImageIndex = 13
       ImageName = '013_Add_Folder'
       OnExecute = acNewFolderExecute
+    end
+    object acRotateLeft: TAction
+      Caption = '90'#176' nach links'
+      ImageIndex = 14
+      ImageName = '014_Rotate_Left'
+      OnExecute = acRotateLeftExecute
+    end
+    object acRotateRight: TAction
+      Caption = '90'#176' nach rechts'
+      ImageIndex = 15
+      ImageName = '015_Rotate_Right'
+      OnExecute = acRotateRightExecute
     end
   end
 end

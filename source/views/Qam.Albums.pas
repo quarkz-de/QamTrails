@@ -38,8 +38,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure stAlbumsFocusChanged(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex);
-    procedure velFotosItemSelectionChanged(Sender: TCustomEasyListview; Item:
-        TEasyItem);
+    procedure velFotosItemSelectionChanged(Sender: TCustomEasyListview;
+      Item: TEasyItem);
     procedure velFotosKeyAction(Sender: TCustomEasyListview; var CharCode: Word;
       var Shift: TShiftState; var DoDefault: Boolean);
     procedure velFotosOLEDragDrop(Sender: TCustomEasyListview;
