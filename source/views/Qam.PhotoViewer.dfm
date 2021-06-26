@@ -19,6 +19,5 @@ object frPhotoViewer: TfrPhotoViewer
     ScrollBars.Size = 17
     OverSize = 0
     TabOrder = 0
-    OnClick = imPhotoClick
   end
 end
