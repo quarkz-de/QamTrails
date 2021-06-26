@@ -55,6 +55,8 @@ type
         Groups: TEasyGroups; NS: TNamespace; var Group: TExplorerGroup);
     procedure velFotosEnumFolder(Sender: TCustomVirtualExplorerEasyListview;
       Namespace: TNamespace; var AllowAsChild: Boolean);
+    function velFotosGroupCompare(Sender: TCustomEasyListview; Item1, Item2:
+        TEasyGroup): Integer;
     procedure velFotosItemCheckChange(Sender: TCustomEasyListview; Item: TEasyItem);
     procedure velFotosItemInitialize(Sender: TCustomEasyListview; Item: TEasyItem);
     procedure velFotosItemSelectionChanged(Sender: TCustomEasyListview;
@@ -470,9 +472,9 @@ begin
     FViewer.LoadFromFile(velFotos.SelectedPath);
 end;
 
-procedure TwPhotoCollection.velFotosCustomGroup(Sender:
-    TCustomVirtualExplorerEasyListview; Groups: TEasyGroups; NS: TNamespace;
-    var Group: TExplorerGroup);
+procedure TwPhotoCollection.velFotosCustomGroup(
+  Sender: TCustomVirtualExplorerEasyListview;
+  Groups: TEasyGroups; NS: TNamespace; var Group: TExplorerGroup);
 var
   I: Integer;
 begin
@@ -515,6 +517,22 @@ begin
             Break;
           end;
     end;
+end;
+
+function TwPhotoCollection.velFotosGroupCompare(Sender: TCustomEasyListview;
+  Item1, Item2: TEasyGroup): Integer;
+var
+  Date1, Date2: TDateTime;
+begin
+  Date1 := StrToDate(Item1.Caption);
+  Date2 := StrToDate(Item2.Caption);
+
+  if Date1 > Date2 then
+    Result := 1
+  else if Date1 < Date2 then
+    Result := -1
+  else
+    Result := 0;
 end;
 
 procedure TwPhotoCollection.velFotosItemCheckChange(

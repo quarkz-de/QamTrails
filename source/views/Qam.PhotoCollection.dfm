@@ -115,6 +115,7 @@ object wPhotoCollection: TwPhotoCollection
       View = elsThumbnail
       OnCustomGroup = velFotosCustomGroup
       OnEnumFolder = velFotosEnumFolder
+      OnGroupCompare = velFotosGroupCompare
       OnItemCheckChange = velFotosItemCheckChange
       OnItemInitialize = velFotosItemInitialize
       OnItemSelectionChanged = velFotosItemSelectionChanged
