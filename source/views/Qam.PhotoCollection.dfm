@@ -7,10 +7,9 @@ object wPhotoCollection: TwPhotoCollection
   ClientWidth = 786
   Color = clBtnFace
   ParentFont = True
-  OldCreateOrder = False
   OnCreate = FormCreate
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 15
   object Splitter1: TSplitter
     Left = 200
     Top = 29
@@ -74,20 +73,20 @@ object wPhotoCollection: TwPhotoCollection
       CompressedFile.Color = clRed
       CompressedFile.Font.Charset = DEFAULT_CHARSET
       CompressedFile.Font.Color = clWindowText
-      CompressedFile.Font.Height = -11
-      CompressedFile.Font.Name = 'Tahoma'
+      CompressedFile.Font.Height = -12
+      CompressedFile.Font.Name = 'Segoe UI'
       CompressedFile.Font.Style = []
       DefaultSortColumn = 0
       EditManager.Font.Charset = DEFAULT_CHARSET
       EditManager.Font.Color = clWindowText
-      EditManager.Font.Height = -11
-      EditManager.Font.Name = 'Tahoma'
+      EditManager.Font.Height = -12
+      EditManager.Font.Name = 'Segoe UI'
       EditManager.Font.Style = []
       EncryptedFile.Color = 32832
       EncryptedFile.Font.Charset = DEFAULT_CHARSET
       EncryptedFile.Font.Color = clWindowText
-      EncryptedFile.Font.Height = -11
-      EncryptedFile.Font.Name = 'Tahoma'
+      EncryptedFile.Font.Height = -12
+      EncryptedFile.Font.Name = 'Segoe UI'
       EncryptedFile.Font.Style = []
       DragManager.DragMode = dmAutomatic
       DragManager.Enabled = True
@@ -96,12 +95,12 @@ object wPhotoCollection: TwPhotoCollection
       FileSizeFormat = vfsfDefault
       Grouped = True
       GroupingColumn = 0
+      Header.Height = 23
       OnRebuiltShellHeader = velFotosRebuiltShellHeader
       PaintInfoGroup.BandColor = clHighlight
       PaintInfoGroup.BandFullWidth = True
       PaintInfoGroup.BandThickness = 2
       PaintInfoGroup.MarginBottom.CaptionIndent = 4
-      PaintInfoGroup.MarginTop.Visible = False
       PaintInfoItem.CheckType = ectBox
       PaintInfoItem.HideCaption = True
       ShowGroupMargins = True
@@ -187,7 +186,7 @@ object wPhotoCollection: TwPhotoCollection
       Left = 140
       Top = 0
       Width = 145
-      Height = 21
+      Height = 23
       Align = alCustom
       Style = csDropDownList
       TabOrder = 0
@@ -211,103 +210,85 @@ object wPhotoCollection: TwPhotoCollection
   end
   object vilIcons: TVirtualImageList
     AutoFill = True
-    DisabledGrayscale = False
-    DisabledSuffix = '_Disabled'
     Images = <
       item
         CollectionIndex = 0
         CollectionName = '000_Menu'
-        Disabled = False
         Name = '000_Menu'
       end
       item
         CollectionIndex = 1
         CollectionName = '001_Home'
-        Disabled = False
         Name = '001_Home'
       end
       item
         CollectionIndex = 2
         CollectionName = '002_Settings'
-        Disabled = False
         Name = '002_Settings'
       end
       item
         CollectionIndex = 3
         CollectionName = '003_Gallery'
-        Disabled = False
         Name = '003_Gallery'
       end
       item
         CollectionIndex = 4
         CollectionName = '004_FilmRoll'
-        Disabled = False
         Name = '004_FilmRoll'
       end
       item
         CollectionIndex = 5
         CollectionName = '005_Thumbnails'
-        Disabled = False
         Name = '005_Thumbnails'
       end
       item
         CollectionIndex = 6
         CollectionName = '006_List'
-        Disabled = False
         Name = '006_List'
       end
       item
         CollectionIndex = 7
         CollectionName = '007_Full_Image'
-        Disabled = False
         Name = '007_Full_Image'
       end
       item
         CollectionIndex = 8
         CollectionName = '008_Add_Gallery'
-        Disabled = False
         Name = '008_Add_Gallery'
       end
       item
         CollectionIndex = 9
         CollectionName = '009_Delete'
-        Disabled = False
         Name = '009_Delete'
       end
       item
         CollectionIndex = 10
         CollectionName = '010_Edit'
-        Disabled = False
         Name = '010_Edit'
       end
       item
         CollectionIndex = 11
         CollectionName = '011_Add_To_Album'
-        Disabled = False
         Name = '011_Add_To_Album'
       end
       item
         CollectionIndex = 12
         CollectionName = '012_Remove_From_Album'
-        Disabled = False
         Name = '012_Remove_From_Album'
       end
       item
         CollectionIndex = 13
         CollectionName = '013_Add_Folder'
-        Disabled = False
         Name = '013_Add_Folder'
       end
       item
         CollectionIndex = 14
         CollectionName = '014_Rotate_Left'
-        Disabled = False
         Name = '014_Rotate_Left'
       end
       item
         CollectionIndex = 15
         CollectionName = '015_Rotate_Right'
-        Disabled = False
         Name = '015_Rotate_Right'
       end>
     ImageCollection = dmCommon.icDarkIcons

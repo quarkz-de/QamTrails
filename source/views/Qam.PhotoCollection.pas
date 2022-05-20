@@ -524,8 +524,8 @@ function TwPhotoCollection.velFotosGroupCompare(Sender: TCustomEasyListview;
 var
   Date1, Date2: TDateTime;
 begin
-  Date1 := StrToDate(Item1.Caption);
-  Date2 := StrToDate(Item2.Caption);
+  Date1 := StrToDateDef(Item1.Caption, 0);
+  Date2 := StrToDateDef(Item2.Caption, 0);
 
   if Date1 > Date2 then
     Result := 1
