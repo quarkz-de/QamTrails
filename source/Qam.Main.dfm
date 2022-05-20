@@ -2,7 +2,7 @@ object wMain: TwMain
   Left = 0
   Top = 0
   Caption = 'QamTrails'
-  ClientHeight = 600
+  ClientHeight = 507
   ClientWidth = 909
   Color = clBtnFace
   CustomTitleBar.CaptionAlignment = taCenter
@@ -28,125 +28,11 @@ object wMain: TwMain
   Font.Style = []
   GlassFrame.Enabled = True
   GlassFrame.Top = 31
-  OldCreateOrder = False
   ShowHint = True
   StyleElements = [seFont, seClient]
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  PixelsPerInch = 96
   TextHeight = 20
-  object svSplitView: TSplitView
-    Left = 0
-    Top = 30
-    Width = 170
-    Height = 570
-    BevelEdges = [beRight]
-    BevelKind = bkTile
-    CloseStyle = svcCompact
-    CompactWidth = 42
-    OpenedWidth = 170
-    Placement = svpLeft
-    TabOrder = 0
-    OnClosed = svSplitViewClosed
-    OnOpened = svSplitViewOpened
-    object pnHeader: TPanel
-      Left = 0
-      Top = 0
-      Width = 168
-      Height = 45
-      Align = alTop
-      BevelOuter = bvNone
-      TabOrder = 0
-      object imBurgerButton: TVirtualImage
-        Left = 6
-        Top = 6
-        Width = 32
-        Height = 32
-        ImageWidth = 0
-        ImageHeight = 0
-        ImageIndex = 0
-        OnClick = imBurgerButtonClick
-      end
-      object txHeaderText: TLabel
-        Left = 52
-        Top = 6
-        Width = 91
-        Height = 30
-        Caption = 'QamTrails'
-        Font.Charset = ANSI_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -21
-        Font.Name = 'Segoe UI'
-        Font.Style = []
-        ParentFont = False
-      end
-    end
-    object pnNavigation: TPanel
-      Left = 0
-      Top = 45
-      Width = 168
-      Height = 525
-      Align = alClient
-      BevelOuter = bvNone
-      TabOrder = 1
-      object sbStart: TSpeedButton
-        Left = 0
-        Top = 0
-        Width = 168
-        Height = 38
-        Action = acSectionWelcome
-        Align = alTop
-        GroupIndex = 1
-        Images = vilLargeIcons
-        Flat = True
-        Margin = 6
-        ExplicitTop = -6
-        ExplicitWidth = 200
-      end
-      object sbSettings: TSpeedButton
-        Left = 0
-        Top = 487
-        Width = 168
-        Height = 38
-        Action = acSectionSettings
-        Align = alBottom
-        GroupIndex = 1
-        Images = vilLargeIcons
-        Flat = True
-        Margin = 6
-        ExplicitTop = 4
-        ExplicitWidth = 200
-      end
-      object SpeedButton1: TSpeedButton
-        Left = 0
-        Top = 38
-        Width = 168
-        Height = 38
-        Action = acSectionPhotoCollection
-        Align = alTop
-        GroupIndex = 1
-        Images = vilLargeIcons
-        Flat = True
-        Margin = 6
-        ExplicitTop = 64
-        ExplicitWidth = 170
-      end
-      object sbAlben: TSpeedButton
-        Left = 0
-        Top = 76
-        Width = 168
-        Height = 38
-        Action = acSectionPhotoAlbums
-        Align = alTop
-        GroupIndex = 1
-        Images = vilLargeIcons
-        Flat = True
-        Margin = 6
-        ExplicitTop = 120
-        ExplicitWidth = 170
-      end
-    end
-  end
   object tbpTitleBar: TTitleBarPanel
     Left = 0
     Top = 0
@@ -176,105 +62,168 @@ object wMain: TwMain
       OnPaint = mbMainPaint
     end
   end
+  object svSplitView: TSplitView
+    Left = 0
+    Top = 30
+    Width = 170
+    Height = 477
+    CloseStyle = svcCompact
+    CompactWidth = 60
+    OpenedWidth = 170
+    Placement = svpLeft
+    TabOrder = 1
+    OnClosed = svSplitViewClosed
+    OnOpened = svSplitViewOpened
+    ExplicitLeft = 4
+    ExplicitTop = 34
+    ExplicitHeight = 403
+    object Panel1: TPanel
+      Left = 0
+      Top = 0
+      Width = 170
+      Height = 45
+      Align = alTop
+      BevelOuter = bvNone
+      TabOrder = 0
+      object imBurgerButton: TVirtualImage
+        Left = 15
+        Top = 6
+        Width = 32
+        Height = 32
+        ImageCollection = dmCommon.icDarkIcons
+        ImageWidth = 0
+        ImageHeight = 0
+        ImageIndex = 0
+        ImageName = '000_Menu'
+        OnClick = imBurgerButton1Click
+      end
+    end
+    object nvNavigation: TQzNavigationView
+      Left = 0
+      Top = 45
+      Width = 170
+      Height = 383
+      Align = alClient
+      BorderStyle = bsNone
+      ButtonHeight = 48
+      ButtonOptions = [nboAllowReorder, nboGroupStyle, nboShowCaptions]
+      Images = vilLargeIcons
+      Items = <
+        item
+          Action = acSectionWelcome
+          AllowReorder = False
+        end
+        item
+          Action = acSectionPhotoCollection
+        end
+        item
+          Action = acSectionPhotoAlbums
+        end>
+      ItemIndex = 0
+      TabOrder = 1
+      OnButtonClicked = nvNavigationButtonClicked
+      ExplicitTop = 50
+    end
+    object nvFooter: TQzNavigationView
+      Left = 0
+      Top = 428
+      Width = 170
+      Height = 49
+      Align = alBottom
+      BorderStyle = bsNone
+      ButtonHeight = 48
+      ButtonOptions = [nboGroupStyle, nboShowCaptions]
+      Images = vilLargeIcons
+      Items = <
+        item
+          Action = acSectionSettings
+        end>
+      TabOrder = 2
+      OnButtonClicked = nvFooterButtonClicked
+      ExplicitLeft = 4
+    end
+  end
   object vilLargeIcons: TVirtualImageList
     AutoFill = True
-    DisabledGrayscale = False
-    DisabledSuffix = '_Disabled'
     Images = <
       item
         CollectionIndex = 0
         CollectionName = '000_Menu'
-        Disabled = False
         Name = '000_Menu'
       end
       item
         CollectionIndex = 1
         CollectionName = '001_Home'
-        Disabled = False
         Name = '001_Home'
       end
       item
         CollectionIndex = 2
         CollectionName = '002_Settings'
-        Disabled = False
         Name = '002_Settings'
       end
       item
         CollectionIndex = 3
         CollectionName = '003_Gallery'
-        Disabled = False
         Name = '003_Gallery'
       end
       item
         CollectionIndex = 4
         CollectionName = '004_FilmRoll'
-        Disabled = False
         Name = '004_FilmRoll'
       end
       item
         CollectionIndex = 5
         CollectionName = '005_Thumbnails'
-        Disabled = False
         Name = '005_Thumbnails'
       end
       item
         CollectionIndex = 6
         CollectionName = '006_List'
-        Disabled = False
         Name = '006_List'
       end
       item
         CollectionIndex = 7
         CollectionName = '007_Full_Image'
-        Disabled = False
         Name = '007_Full_Image'
       end
       item
         CollectionIndex = 8
         CollectionName = '008_Add_Gallery'
-        Disabled = False
         Name = '008_Add_Gallery'
       end
       item
         CollectionIndex = 9
         CollectionName = '009_Delete'
-        Disabled = False
         Name = '009_Delete'
       end
       item
         CollectionIndex = 10
         CollectionName = '010_Edit'
-        Disabled = False
         Name = '010_Edit'
       end
       item
         CollectionIndex = 11
         CollectionName = '011_Add_To_Album'
-        Disabled = False
         Name = '011_Add_To_Album'
       end
       item
         CollectionIndex = 12
         CollectionName = '012_Remove_From_Album'
-        Disabled = False
         Name = '012_Remove_From_Album'
       end
       item
         CollectionIndex = 13
         CollectionName = '013_Add_Folder'
-        Disabled = False
         Name = '013_Add_Folder'
       end
       item
         CollectionIndex = 14
         CollectionName = '014_Rotate_Left'
-        Disabled = False
         Name = '014_Rotate_Left'
       end
       item
         CollectionIndex = 15
         CollectionName = '015_Rotate_Right'
-        Disabled = False
         Name = '015_Rotate_Right'
       end>
     ImageCollection = dmCommon.icDarkIcons
@@ -356,103 +305,85 @@ object wMain: TwMain
   end
   object vilIcons: TVirtualImageList
     AutoFill = True
-    DisabledGrayscale = False
-    DisabledSuffix = '_Disabled'
     Images = <
       item
         CollectionIndex = 0
         CollectionName = '000_Menu'
-        Disabled = False
         Name = '000_Menu'
       end
       item
         CollectionIndex = 1
         CollectionName = '001_Home'
-        Disabled = False
         Name = '001_Home'
       end
       item
         CollectionIndex = 2
         CollectionName = '002_Settings'
-        Disabled = False
         Name = '002_Settings'
       end
       item
         CollectionIndex = 3
         CollectionName = '003_Gallery'
-        Disabled = False
         Name = '003_Gallery'
       end
       item
         CollectionIndex = 4
         CollectionName = '004_FilmRoll'
-        Disabled = False
         Name = '004_FilmRoll'
       end
       item
         CollectionIndex = 5
         CollectionName = '005_Thumbnails'
-        Disabled = False
         Name = '005_Thumbnails'
       end
       item
         CollectionIndex = 6
         CollectionName = '006_List'
-        Disabled = False
         Name = '006_List'
       end
       item
         CollectionIndex = 7
         CollectionName = '007_Full_Image'
-        Disabled = False
         Name = '007_Full_Image'
       end
       item
         CollectionIndex = 8
         CollectionName = '008_Add_Gallery'
-        Disabled = False
         Name = '008_Add_Gallery'
       end
       item
         CollectionIndex = 9
         CollectionName = '009_Delete'
-        Disabled = False
         Name = '009_Delete'
       end
       item
         CollectionIndex = 10
         CollectionName = '010_Edit'
-        Disabled = False
         Name = '010_Edit'
       end
       item
         CollectionIndex = 11
         CollectionName = '011_Add_To_Album'
-        Disabled = False
         Name = '011_Add_To_Album'
       end
       item
         CollectionIndex = 12
         CollectionName = '012_Remove_From_Album'
-        Disabled = False
         Name = '012_Remove_From_Album'
       end
       item
         CollectionIndex = 13
         CollectionName = '013_Add_Folder'
-        Disabled = False
         Name = '013_Add_Folder'
       end
       item
         CollectionIndex = 14
         CollectionName = '014_Rotate_Left'
-        Disabled = False
         Name = '014_Rotate_Left'
       end
       item
         CollectionIndex = 15
         CollectionName = '015_Rotate_Right'
-        Disabled = False
         Name = '015_Rotate_Right'
       end>
     ImageCollection = dmCommon.icDarkIcons

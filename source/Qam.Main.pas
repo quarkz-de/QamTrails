@@ -13,18 +13,11 @@ uses
   Vcl.ActnList, Vcl.StdActns,
   Eventbus,
   Qam.Events, Qam.Forms, System.ImageList, Vcl.ImgList, Vcl.ToolWin,
-  Vcl.ActnCtrls;
+  Vcl.ActnCtrls, Qodelib.NavigationView;
 
 type
   TwMain = class(TForm)
     vilLargeIcons: TVirtualImageList;
-    svSplitView: TSplitView;
-    pnHeader: TPanel;
-    imBurgerButton: TVirtualImage;
-    txHeaderText: TLabel;
-    pnNavigation: TPanel;
-    sbStart: TSpeedButton;
-    sbSettings: TSpeedButton;
     amActions: TActionManager;
     acFileExit: TFileExit;
     acHelpAbout: TAction;
@@ -33,12 +26,15 @@ type
     tbpTitleBar: TTitleBarPanel;
     mbMain: TActionMainMenuBar;
     vilIcons: TVirtualImageList;
-    SpeedButton1: TSpeedButton;
     acSectionPhotoCollection: TAction;
-    sbAlben: TSpeedButton;
     acSectionPhotoAlbums: TAction;
+    svSplitView: TSplitView;
+    Panel1: TPanel;
+    imBurgerButton: TVirtualImage;
+    nvNavigation: TQzNavigationView;
+    nvFooter: TQzNavigationView;
     procedure FormCreate(Sender: TObject);
-    procedure imBurgerButtonClick(Sender: TObject);
+    procedure imBurgerButton1Click(Sender: TObject);
     procedure mbMainPaint(Sender: TObject);
     procedure acSectionWelcomeExecute(Sender: TObject);
     procedure acSectionSettingsExecute(Sender: TObject);
@@ -48,6 +44,8 @@ type
     procedure svSplitViewClosed(Sender: TObject);
     procedure svSplitViewOpened(Sender: TObject);
     procedure acSectionPhotoCollectionExecute(Sender: TObject);
+    procedure nvFooterButtonClicked(Sender: TObject; Index: Integer);
+    procedure nvNavigationButtonClicked(Sender: TObject; Index: Integer);
   private
     FForms: TApplicationFormList;
     procedure InitSettings;
@@ -112,7 +110,7 @@ begin
   FForms.Free;
 end;
 
-procedure TwMain.imBurgerButtonClick(Sender: TObject);
+procedure TwMain.imBurgerButton1Click(Sender: TObject);
 begin
   svSplitView.Opened := not svSplitView.Opened;
 end;
@@ -138,6 +136,16 @@ begin
     end;
 end;
 
+procedure TwMain.nvFooterButtonClicked(Sender: TObject; Index: Integer);
+begin
+  nvNavigation.ItemIndex := -1;
+end;
+
+procedure TwMain.nvNavigationButtonClicked(Sender: TObject; Index: Integer);
+begin
+  nvFooter.ItemIndex := -1;
+end;
+
 procedure TwMain.OnThemeChange(AEvent: IThemeChangeEvent);
 begin
   CustomTitleBar.SystemColors := AEvent.IsWindows;
@@ -150,11 +158,15 @@ end;
 procedure TwMain.svSplitViewClosed(Sender: TObject);
 begin
   ApplicationSettings.DrawerOpened := false;
+  nvNavigation.ButtonOptions := nvNavigation.ButtonOptions - [nboShowCaptions];
+  nvFooter.ButtonOptions := nvFooter.ButtonOptions - [nboShowCaptions];
 end;
 
 procedure TwMain.svSplitViewOpened(Sender: TObject);
 begin
   ApplicationSettings.DrawerOpened := true;
+  nvNavigation.ButtonOptions := nvNavigation.ButtonOptions + [nboShowCaptions];
+  nvFooter.ButtonOptions := nvFooter.ButtonOptions + [nboShowCaptions];
 end;
 
 procedure TwMain.WMActivate(var Message: TWMActivate);
