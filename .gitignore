@@ -44,6 +44,10 @@ __recovery/
 # Add-On generated files
 *.stat
 
+# LSP for vscode
+*.delphilsp.json
+.vscode/
+
 # folder structures
 build
 dcu
